@@ -234,6 +234,12 @@
     await loadLiveData();
     renderAll();
 
+    // Open the most relevant tab: a remembered choice, else the Draft tab while
+    // a draft is in progress, otherwise the Leaderboard for checking scores.
+    let startTab = null;
+    try { startTab = localStorage.getItem("wcsft-tab"); } catch (e) {}
+    showTab(startTab || (isEditable() ? "draft" : "leaderboard"));
+
     // Keep live scores fresh while the app is open: re-fetch the data file on
     // an interval and whenever the tab is brought back to the foreground. (The
     // browser only reads the committed JSON — it never calls the API directly,
@@ -836,6 +842,25 @@
     selectedTeamId = teamId;
     renderTeamBoard();
     renderTeamInfo();
+    const t = teamById[teamId];
+    if (t) { const ttl = $("#teamModalTitle"); if (ttl) ttl.textContent = t.name; }
+    const modal = $("#teamModal");
+    if (modal) modal.classList.add("open");
+  }
+
+  function closeTeamModal() {
+    const modal = $("#teamModal");
+    if (modal) modal.classList.remove("open");
+  }
+
+  // ---- tab navigation ------------------------------------------------------
+  function showTab(name) {
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".tab-panel");
+    if (tabs.forEach) tabs.forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+    if (panels.forEach) panels.forEach((p) => p.classList.toggle("active", p.dataset.panel === name));
+    try { localStorage.setItem("wcsft-tab", name); } catch (e) {}
+    if (window.scrollTo) window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   function draftCurrent(teamId) {
@@ -1032,6 +1057,12 @@
       reader.readAsText(f);
     });
     $("#refreshBtn").addEventListener("click", () => refreshLiveData(true));
+    $("#tabbar").addEventListener("click", (e) => {
+      const tab = e.target.closest(".tab");
+      if (tab) showTab(tab.dataset.tab);
+    });
+    $("#teamModalClose").addEventListener("click", closeTeamModal);
+    $("#teamModal").addEventListener("click", (e) => { if (e.target.id === "teamModal") closeTeamModal(); });
     $("#exportBtn").addEventListener("click", openExport);
     $("#exportClose").addEventListener("click", () => $("#exportModal").classList.remove("open"));
     $("#exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") $("#exportModal").classList.remove("open"); });
@@ -1053,17 +1084,11 @@
     });
     $("#myTeams").addEventListener("click", (e) => {
       const card = e.target.closest(".dash-card");
-      if (!card) return;
-      selectTeam(card.dataset.team);
-      const info = $("#teamInfoSection");
-      if (info && info.scrollIntoView) info.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (card) selectTeam(card.dataset.team);
     });
     $("#groupStandings").addEventListener("click", (e) => {
       const row = e.target.closest("tr[data-team]");
-      if (!row) return;
-      selectTeam(row.dataset.team);
-      const info = $("#teamInfoSection");
-      if (info && info.scrollIntoView) info.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (row) selectTeam(row.dataset.team);
     });
     $("#orderList").addEventListener("click", (e) => {
       const up = e.target.closest("[data-up]");
