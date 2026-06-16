@@ -1,0 +1,12 @@
+{
+  "name": "world-cup-super-fun-time",
+  "version": "1.0.0",
+  "description": "A static 2026 Men's World Cup snake-draft web app for three owners with live scoring from football-data.org.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch-data": "node scripts/fetchFootballData.mjs",
+    "serve": "python3 -m http.server 8080"
+  },
+  "license": "MIT"
+}

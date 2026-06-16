@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="World Cup Super Fun Time — a 2026 Men's World Cup snake draft game for three owners with live scoring." />
+  <title>World Cup Super Fun Time</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>" />
+  <link rel="preconnect" href="https://flagcdn.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- ============================ HERO ============================ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="logo">⚽</span>
+      <div class="title-block">
+        <h1 class="title">World Cup Super Fun Time</h1>
+        <p class="subtitle">2026 Men's World Cup snake draft · 3 owners · 12 teams each · group wins + knockout bonuses</p>
+      </div>
+      <div class="hero-actions">
+        <span id="modeBadge" class="badge local"><span class="dot"></span> Local Draft Mode</span>
+        <button id="exportBtn" class="btn primary">⬇ Export Lock JSON</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ===================== LEADERBOARD ===================== -->
+    <section class="section" id="leaderboard-section">
+      <div class="section-head">
+        <h2>🏆 Owner Leaderboard</h2>
+        <span class="hint">Sorted by total points, then total goals scored as the tiebreaker.</span>
+      </div>
+      <div id="leaderboard" class="leaderboard"></div>
+    </section>
+
+    <!-- ===================== DRAFT CONTROLS ===================== -->
+    <section class="section">
+      <div class="section-head">
+        <h2>🎯 Draft Control Center</h2>
+        <span class="hint">Snake order is editable until you lock. The current owner is enforced for each pick.</span>
+      </div>
+      <div class="card pad">
+        <div id="pickbar" class="pickbar"></div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
+
+        <div class="controls-row" style="margin-top:16px; align-items:flex-start;">
+          <div style="min-width:240px; flex:1;">
+            <div class="section-head"><h2 style="font-size:14px">Snake Order</h2></div>
+            <div id="orderList" class="order-list"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px; min-width:200px;">
+            <div class="section-head"><h2 style="font-size:14px">Actions</h2></div>
+            <button id="undoBtn" class="btn warn">↶ Undo Last Pick</button>
+            <button id="resetBtn" class="btn ghost">⟲ Reset Draft</button>
+            <button id="saveProgressBtn" class="btn ghost">💾 Save Draft (JSON)</button>
+            <button id="importBtn" class="btn ghost">⬆ Import Draft JSON</button>
+            <div id="lockedNote" class="locked-note" style="display:none">
+              🔒 This draft is locked &amp; published. All editing controls are disabled — everyone sees the same board.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== BOARD + INFO ===================== -->
+    <div class="grid-main section">
+      <!-- available teams -->
+      <section class="card pad">
+        <div class="section-head">
+          <h2>🌍 Available Teams</h2>
+          <span class="hint" id="availCount"></span>
+        </div>
+        <div class="filters">
+          <input id="searchInput" class="input" type="search" placeholder="Search team or confederation…" aria-label="Search teams" />
+          <select id="groupFilter" class="select" aria-label="Filter by group"></select>
+        </div>
+        <div id="teamBoard" class="team-board"></div>
+      </section>
+
+      <!-- team info panel -->
+      <section class="card pad" id="teamInfoSection">
+        <div class="section-head"><h2>📋 Team Info</h2></div>
+        <div id="teamInfo"></div>
+      </section>
+    </div>
+
+    <!-- ===================== ROSTERS ===================== -->
+    <section class="section">
+      <div class="section-head">
+        <h2>👥 Owner Rosters</h2>
+        <span class="hint">Tap any drafted team to open its profile.</span>
+      </div>
+      <div id="rosters" class="rosters"></div>
+    </section>
+
+    <!-- ===================== RULES ===================== -->
+    <section class="section">
+      <div class="section-head"><h2>📖 How It Works</h2></div>
+      <div class="card pad">
+        <div class="rules-grid">
+          <div>
+            <h3>🐍 Draft Rules</h3>
+            <ul>
+              <li><b>48</b> World Cup teams available; only <b>36</b> get drafted.</li>
+              <li><b>3</b> owners, <b>12</b> teams each, snake order.</li>
+              <li>Order reverses every round (1‑2‑3, 3‑2‑1, …).</li>
+              <li>Each pick is locked to the owner on the clock.</li>
+              <li>Commissioner can <b>undo</b>, <b>move</b>, or <b>reset</b> before lock.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>📊 Scoring</h3>
+            <table class="score-table">
+              <tr><td>Group-stage win</td><td>1</td></tr>
+              <tr><td>Group draw / loss</td><td>0</td></tr>
+              <tr><td>Round of 32 win</td><td>2</td></tr>
+              <tr><td>Round of 16 win</td><td>3</td></tr>
+              <tr><td>Quarterfinal win</td><td>4</td></tr>
+              <tr><td>Semifinal win</td><td>5</td></tr>
+              <tr><td>Third-place win</td><td>4</td></tr>
+              <tr><td>Final win</td><td>6</td></tr>
+            </table>
+            <p style="color:var(--muted); font-size:12px; margin:8px 0 0">Goals are a tiebreaker only — they never add points. Knockout points are awarded only for a <b>win</b>.</p>
+          </div>
+          <div>
+            <h3>🔒 Lock &amp; Publish</h3>
+            <ul>
+              <li>Draft locally on one device — picks save to your browser automatically.</li>
+              <li>When done, hit <b>Export Lock JSON</b>.</li>
+              <li>Replace <b>public/data/draft-lock.json</b> with it and push.</li>
+              <li>Once <code>"locked": true</code>, every visitor sees the same frozen draft.</li>
+              <li>Live scores update from the football-data.org GitHub Action.</li>
+            </ul>
+          </div>
+        </div>
+        <div id="sync" class="sync"></div>
+        <p class="footer-note">World Cup Super Fun Time · static GitHub Pages app · data seeded for the 2026 tournament &amp; refreshed from football-data.org.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== EXPORT MODAL ===================== -->
+  <div id="exportModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+      <div class="modal-head">
+        <h3 id="exportTitle">Export Lock JSON</h3>
+        <button id="exportClose" class="btn sm ghost" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="exportNote"></p>
+        <p>Download or copy this, then replace <b>public/data/draft-lock.json</b> in the repo and push. The published site will load as a locked, read-only draft for everyone.</p>
+        <div id="exportCode" class="code"></div>
+        <div class="modal-actions">
+          <button id="downloadLockBtn" class="btn primary">⬇ Download draft-lock.json</button>
+          <button id="copyLockBtn" class="btn">📋 Copy JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== IMPORT MODAL ===================== -->
+  <div id="importModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+      <div class="modal-head">
+        <h3 id="importTitle">Import Draft JSON</h3>
+        <button id="importClose" class="btn sm ghost" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Load a saved draft to continue on this device — useful for resuming an in-progress draft on a different computer. Paste the JSON below, or choose a file (a saved draft, or an exported <b>draft-lock.json</b>). This <b>replaces</b> the current local draft.</p>
+        <textarea id="importText" class="code" style="white-space:pre-wrap; width:100%; min-height:170px; resize:vertical; outline:none;" placeholder='Paste draft JSON here, e.g. { "draftOrder": [...], "picks": [...] }'></textarea>
+        <div class="modal-actions">
+          <input id="importFile" type="file" accept="application/json,.json" class="input" aria-label="Choose a draft JSON file" />
+          <button id="importLoadBtn" class="btn primary">⬆ Load Draft</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="assets/js/teams.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

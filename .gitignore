@@ -1,0 +1,13 @@
+# Dependencies (the app is no-build; none are required)
+node_modules/
+
+# Local env — NEVER commit your football-data.org API key
+.env
+.env.*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
