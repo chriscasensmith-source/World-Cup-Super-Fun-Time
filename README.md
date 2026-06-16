@@ -45,8 +45,11 @@ Goals scored are a **tiebreaker only** — they never add points. Standings sort
 ├── assets/
 │   ├── css/styles.css
 │   └── js/
+│       ├── config.js              # paste Supabase keys here for cross-phone sync
 │       ├── teams.js               # seeded 48-team list + owners + scoring config
+│       ├── sync.js                # cloud (Supabase) / local store + realtime
 │       └── app.js                 # draft logic, persistence, scoring, UI
+├── supabase/schema.sql            # one-time SQL to create the shared draft table
 ├── public/data/
 │   ├── draft-lock.json            # publish target: { "locked": false } until you lock
 │   └── world-cup-live.json        # written by the GitHub Action (live data)
@@ -99,6 +102,31 @@ In-progress picks are saved only in **your** browser (`localStorage`), so they a
 2. On the other device, open the site and click **⬆ Import Draft JSON**, then paste the JSON or choose the file and hit **Load Draft**.
 
 Import accepts both a saved `draft-progress.json` and an exported `draft-lock.json` (a locked file loads back as an editable draft). It validates picks, drops unknown/duplicate teams, enforces the 12-per-owner cap, and re-sequences pick numbers. Import is disabled when the published site is locked.
+
+---
+
+## Draft from each phone (shared cloud room — optional)
+
+By default the draft saves to **one** device's browser (`localStorage`). To let each owner draft from **their own phone** with picks **saved to the cloud and synced live** across all devices, connect a free **Supabase** project. When configured, the hero shows a **☁ Cloud Synced** badge; otherwise it shows **📱 This Device** and works exactly as before.
+
+**1. Create the table.** In your Supabase project: **SQL Editor → New query**, paste the contents of [`supabase/schema.sql`](supabase/schema.sql), and **Run**. This creates one shared `draft` row with Realtime enabled.
+
+**2. Add your keys.** In **Project Settings → API**, copy the **Project URL** and the **anon public** key into `assets/js/config.js`:
+
+```js
+window.WCSFT_CONFIG = {
+  supabaseUrl: "https://YOUR-PROJECT.supabase.co",
+  supabaseAnonKey: "YOUR-ANON-PUBLIC-KEY"
+};
+```
+
+Both values are **safe to commit** — the anon key is a public client key, and access is governed by the table's Row Level Security policies (created by the schema). Commit `config.js` and push.
+
+**3. Draft.** Everyone opens the same site URL on their phone. Each person sets **"This Phone"** to their owner name — then the **Draft** button only lights up on that owner's turn (pick "Anyone (commissioner)" to draft on any turn / run undo, move, reset). Every pick saves to Supabase and appears on the other phones in real time. A version check prevents two phones from clobbering the same pick.
+
+> Security note: with the default policies, anyone holding the public anon key can edit the live draft row — fine for a friendly 3-person game, and the final result is still protected by the file-based lock/publish step. To lock it down further, edit the policies in `supabase/schema.sql` to require a shared secret.
+
+Locking & publishing is unchanged: when you're done, **Export Lock JSON** → replace `public/data/draft-lock.json` → push. Locked mode ignores the cloud and shows the same frozen board to everyone.
 
 The locked file looks like:
 

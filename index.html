@@ -23,6 +23,7 @@
         <p class="subtitle">2026 Men's World Cup snake draft · 3 owners · 12 teams each · group wins + knockout bonuses</p>
       </div>
       <div class="hero-actions">
+        <span id="syncBadge" class="badge" title="Drafting sync mode"><span class="dot"></span> Local</span>
         <span id="modeBadge" class="badge local"><span class="dot"></span> Local Draft Mode</span>
         <button id="exportBtn" class="btn primary">⬇ Export Lock JSON</button>
       </div>
@@ -55,7 +56,11 @@
             <div id="orderList" class="order-list"></div>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px; min-width:200px;">
-            <div class="section-head"><h2 style="font-size:14px">Actions</h2></div>
+            <div class="section-head"><h2 style="font-size:14px">This Phone</h2></div>
+            <select id="identitySelect" class="select" aria-label="Who is drafting on this device">
+              <option value="anyone">Anyone (commissioner)</option>
+            </select>
+            <div class="section-head" style="margin-top:4px"><h2 style="font-size:14px">Actions</h2></div>
             <button id="undoBtn" class="btn warn">↶ Undo Last Pick</button>
             <button id="resetBtn" class="btn ghost">⟲ Reset Draft</button>
             <button id="saveProgressBtn" class="btn ghost">💾 Save Draft (JSON)</button>
@@ -187,7 +192,9 @@
 
   <div id="toast" class="toast"></div>
 
+  <script src="assets/js/config.js"></script>
   <script src="assets/js/teams.js"></script>
+  <script src="assets/js/sync.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>
