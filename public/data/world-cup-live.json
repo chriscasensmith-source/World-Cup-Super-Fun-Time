@@ -1,0 +1,13 @@
+{
+  "source": "football-data.org",
+  "competitionCode": "WC",
+  "season": "2026",
+  "generatedAt": null,
+  "competition": null,
+  "teams": [],
+  "matches": [],
+  "standings": [],
+  "errors": [
+    "Placeholder file. Run the 'Update Football Data' GitHub Action (or scripts/fetchFootballData.mjs with FOOTBALL_DATA_API_KEY set) to populate live 2026 World Cup data."
+  ]
+}
