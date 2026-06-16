@@ -293,7 +293,7 @@ main { padding: 20px 0 64px; }
 }
 .roster-pick .flag { width: 26px; height: 18px; font-size: 13px; }
 .roster-pick .rp-name { font-weight: 700; font-size: 13px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.roster-pick .rp-score { font-size: 12px; font-weight: 800; color: var(--brand); }
+.roster-pick .rp-score { font-size: 12px; font-weight: 800; color: var(--text); }
 .roster-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 14px 8px; }
 .roster-foot { padding: 10px 14px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
 .roster-foot b { color: var(--text); }
@@ -325,7 +325,7 @@ main { padding: 20px 0 64px; }
 .dash-card:active { transform: translateY(1px); }
 .dash-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
 .dash-card-top .dc-name { font-weight: 750; font-size: 14px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dash-card-top .dc-score { font-size: 13px; font-weight: 800; color: var(--brand); }
+.dash-card-top .dc-score { font-size: 13px; font-weight: 800; color: var(--text); }
 .dash-card-mid { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
 .dash-card-stats { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
 .dash-card-stats b { color: var(--text); }
@@ -444,3 +444,79 @@ main { padding: 20px 0 64px; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ----- data status / admin ----- */
+.data-status { margin-top: 18px; }
+.ds-grid { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 14px; }
+.ds-item { min-width: 110px; }
+.ds-k { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+.ds-v { font-size: 13.5px; font-weight: 650; margin-top: 3px; }
+.ds-v.ds-ok { color: var(--brand); }
+.ds-refresh { width: 100%; }
+
+/* ----- mobile bottom navigation ----- */
+.bottomnav {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: rgba(15, 22, 48, 0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.bnav {
+  flex: 1; background: none; border: none; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 7px 2px; font: inherit; font-weight: 700; font-size: 10px;
+  cursor: pointer; border-radius: 12px; min-height: 48px;
+}
+.bnav .bi { font-size: 20px; line-height: 1; }
+.bnav.active { color: var(--text); background: rgba(255, 255, 255, 0.06); }
+
+/* combined W-D-L record cell: shown only on mobile, replacing split columns */
+.gs-record { display: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ===================== MOBILE (<= 640px) ===================== */
+@media (max-width: 640px) {
+  .wrap { padding: 0 12px; }
+  body { padding-bottom: 70px; } /* clear the fixed bottom nav */
+
+  /* swap top tabs for the bottom nav */
+  .tabbar { display: none; }
+  .bottomnav { display: flex; }
+  .tab-panel { padding-top: 16px; }
+
+  .hero-inner { padding: 12px 14px; }
+  .title { font-size: 20px; }
+
+  /* one team per row, roomier cards */
+  .dash-grid { grid-template-columns: 1fr; }
+  .dash-card { padding: 14px; }
+  .team-board { grid-template-columns: 1fr; gap: 12px; }
+  .team-card { padding: 13px 14px; min-height: 56px; }
+  .team-card .flag { width: 40px; height: 28px; }
+  .roster-pick { padding: 11px 10px; min-height: 48px; }
+
+  /* leaderboard cards stack with more presence */
+  .lb-card { padding: 16px; }
+
+  /* standings: drop the split Pld/W/D/L columns, show a compact record */
+  .gs-grid { grid-template-columns: 1fr; }
+  .gs-col { display: none; }
+  .gs-record { display: table-cell; }
+  .gs-table { font-size: 13px; }
+  .gs-table th, .gs-table td { padding: 9px 4px; }
+  .gs-team .flag { width: 26px; height: 18px; }
+  .gs-table th.gs-record, .gs-table td.gs-record { color: var(--muted); font-weight: 700; }
+
+  /* bigger tap targets for buttons & selects */
+  .btn { padding: 11px 16px; font-size: 14px; }
+  .btn.sm { padding: 8px 12px; }
+  .input, .select { padding: 12px 13px; font-size: 15px; }
+  .owner-tab { padding: 11px 15px; min-height: 44px; }
+
+  /* draft controls stack instead of side-by-side */
+  .controls-row { flex-direction: column; }
+
+  /* modals fill more of the screen */
+  .modal { max-height: 92vh; }
+}
