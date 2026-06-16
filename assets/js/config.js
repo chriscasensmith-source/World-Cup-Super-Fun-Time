@@ -15,6 +15,6 @@
  *     supabaseAnonKey → "anon public" key
  */
 window.WCSFT_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: ""
+  supabaseUrl: "https://rlfrxitwsdpbevslwlso.supabase.co",
+  supabaseAnonKey: "sb_publishable_LduygxDECO4zyJVJalRzHA_0Y8MvVQD"
 };
