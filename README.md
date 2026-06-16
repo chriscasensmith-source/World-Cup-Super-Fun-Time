@@ -92,6 +92,15 @@ npx serve .
    ```
 8. Once `draft-lock.json` has `"locked": true`, every visitor sees the same locked board with a **Draft Locked** badge and all editing disabled. Share the Pages URL with friends. 🎉
 
+### Resume a draft on another device
+
+In-progress picks are saved only in **your** browser (`localStorage`), so they aren't shared until you lock. To move an unfinished draft between devices:
+
+1. On the first device, click **💾 Save Draft (JSON)** to download `draft-progress.json`.
+2. On the other device, open the site and click **⬆ Import Draft JSON**, then paste the JSON or choose the file and hit **Load Draft**.
+
+Import accepts both a saved `draft-progress.json` and an exported `draft-lock.json` (a locked file loads back as an editable draft). It validates picks, drops unknown/duplicate teams, enforces the 12-per-owner cap, and re-sequences pick numbers. Import is disabled when the published site is locked.
+
 The locked file looks like:
 
 ```json

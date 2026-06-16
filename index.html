@@ -58,6 +58,8 @@
             <div class="section-head"><h2 style="font-size:14px">Actions</h2></div>
             <button id="undoBtn" class="btn warn">↶ Undo Last Pick</button>
             <button id="resetBtn" class="btn ghost">⟲ Reset Draft</button>
+            <button id="saveProgressBtn" class="btn ghost">💾 Save Draft (JSON)</button>
+            <button id="importBtn" class="btn ghost">⬆ Import Draft JSON</button>
             <div id="lockedNote" class="locked-note" style="display:none">
               🔒 This draft is locked &amp; published. All editing controls are disabled — everyone sees the same board.
             </div>
@@ -157,6 +159,24 @@
         <div class="modal-actions">
           <button id="downloadLockBtn" class="btn primary">⬇ Download draft-lock.json</button>
           <button id="copyLockBtn" class="btn">📋 Copy JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== IMPORT MODAL ===================== -->
+  <div id="importModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+      <div class="modal-head">
+        <h3 id="importTitle">Import Draft JSON</h3>
+        <button id="importClose" class="btn sm ghost" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Load a saved draft to continue on this device — useful for resuming an in-progress draft on a different computer. Paste the JSON below, or choose a file (a saved draft, or an exported <b>draft-lock.json</b>). This <b>replaces</b> the current local draft.</p>
+        <textarea id="importText" class="code" style="white-space:pre-wrap; width:100%; min-height:170px; resize:vertical; outline:none;" placeholder='Paste draft JSON here, e.g. { "draftOrder": [...], "picks": [...] }'></textarea>
+        <div class="modal-actions">
+          <input id="importFile" type="file" accept="application/json,.json" class="input" aria-label="Choose a draft JSON file" />
+          <button id="importLoadBtn" class="btn primary">⬆ Load Draft</button>
         </div>
       </div>
     </div>

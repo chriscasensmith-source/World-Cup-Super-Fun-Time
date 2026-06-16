@@ -350,6 +350,8 @@
     // buttons
     $("#undoBtn").disabled = !isEditable() || state.picks.length === 0;
     $("#resetBtn").disabled = state.locked || state.picks.length === 0;
+    $("#saveProgressBtn").disabled = state.picks.length === 0;
+    $("#importBtn").disabled = state.locked;
 
     // locked notice
     $("#lockedNote").style.display = state.locked ? "block" : "none";
@@ -618,18 +620,101 @@
     $("#exportModal").dataset.json = json;
   }
 
-  function downloadLock() {
-    const json = $("#exportModal").dataset.json;
+  function downloadJSON(filename, json) {
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = el("a");
     a.href = url;
-    a.download = "draft-lock.json";
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  function downloadLock() {
+    downloadJSON("draft-lock.json", $("#exportModal").dataset.json);
     toast("Downloaded draft-lock.json — commit it to public/data/");
+  }
+
+  // ---- save / import in-progress draft (move between devices) -------------
+  function saveProgress() {
+    const obj = {
+      locked: false,
+      lockedAt: null,
+      draftOrder: state.draftOrder.slice(),
+      picks: state.picks
+        .slice()
+        .sort((a, b) => a.pickNumber - b.pickNumber)
+        .map((p) => ({ teamId: p.teamId, ownerId: p.ownerId, pickNumber: p.pickNumber }))
+    };
+    downloadJSON("draft-progress.json", JSON.stringify(obj, null, 2));
+    toast("Saved draft-progress.json — import it on another device to resume.");
+  }
+
+  function openImport() {
+    if (state.locked) { toast("Draft is locked — import is disabled."); return; }
+    $("#importText").value = "";
+    $("#importFile").value = "";
+    $("#importModal").classList.add("open");
+  }
+
+  // Apply an imported draft object onto local state. Accepts both the saved
+  // progress shape and an exported draft-lock.json (the `locked` flag is
+  // ignored so a locked file can be loaded back as an editable draft).
+  function applyImported(data) {
+    if (!data || typeof data !== "object") throw new Error("not a JSON object");
+    if (!Array.isArray(data.picks)) throw new Error("missing \"picks\" array");
+
+    let order = state.draftOrder.slice();
+    if (Array.isArray(data.draftOrder) && data.draftOrder.length === OWNERS.length &&
+        data.draftOrder.every((id) => ownerById[id]) &&
+        new Set(data.draftOrder).size === OWNERS.length) {
+      order = data.draftOrder.slice();
+    }
+
+    const seen = new Set();
+    const counts = {};
+    const picks = [];
+    data.picks
+      .slice()
+      .sort((a, b) => (a.pickNumber || 0) - (b.pickNumber || 0))
+      .forEach((p) => {
+        if (!p || !teamById[p.teamId] || !ownerById[p.ownerId]) return; // skip unknown
+        if (seen.has(p.teamId)) return;                                  // dedupe teams
+        if ((counts[p.ownerId] || 0) >= TEAMS_PER_OWNER) return;         // owner cap
+        if (picks.length >= TOTAL_PICKS) return;                         // total cap
+        seen.add(p.teamId);
+        counts[p.ownerId] = (counts[p.ownerId] || 0) + 1;
+        picks.push({ teamId: p.teamId, ownerId: p.ownerId });
+      });
+    picks.forEach((p, i) => { p.pickNumber = i + 1; }); // re-sequence contiguously
+
+    state.draftOrder = order;
+    state.picks = picks;
+    saveLocal();
+  }
+
+  function doImport() {
+    const text = ($("#importText").value || "").trim();
+    if (!text) { toast("Paste JSON or choose a file first."); return; }
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      toast("Import failed: invalid JSON.");
+      return;
+    }
+    try {
+      applyImported(data);
+    } catch (e) {
+      toast("Import failed: " + e.message);
+      return;
+    }
+    $("#importModal").classList.remove("open");
+    selectedTeamId = null;
+    toast(`Imported draft — ${state.picks.length} pick${state.picks.length === 1 ? "" : "s"} loaded.`);
+    renderAll();
   }
 
   async function copyLock() {
@@ -656,6 +741,19 @@
 
     $("#undoBtn").addEventListener("click", undoLast);
     $("#resetBtn").addEventListener("click", resetDraft);
+    $("#saveProgressBtn").addEventListener("click", saveProgress);
+    $("#importBtn").addEventListener("click", openImport);
+    $("#importClose").addEventListener("click", () => $("#importModal").classList.remove("open"));
+    $("#importModal").addEventListener("click", (e) => { if (e.target.id === "importModal") $("#importModal").classList.remove("open"); });
+    $("#importLoadBtn").addEventListener("click", doImport);
+    $("#importFile").addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { $("#importText").value = reader.result; };
+      reader.onerror = () => toast("Could not read that file.");
+      reader.readAsText(f);
+    });
     $("#exportBtn").addEventListener("click", openExport);
     $("#exportClose").addEventListener("click", () => $("#exportModal").classList.remove("open"));
     $("#exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") $("#exportModal").classList.remove("open"); });
