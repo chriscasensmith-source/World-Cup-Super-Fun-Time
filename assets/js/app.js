@@ -133,6 +133,31 @@
 
     await loadLiveData();
     renderAll();
+
+    // Keep live scores fresh while the app is open: re-fetch the data file on
+    // an interval and whenever the tab is brought back to the foreground. (The
+    // browser only reads the committed JSON — it never calls the API directly,
+    // so the secret key is never exposed.)
+    setInterval(() => refreshLiveData(false), 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshLiveData(false);
+    });
+  }
+
+  // Re-pull world-cup-live.json and re-render the score-dependent UI without a
+  // full page reload.
+  async function refreshLiveData(manual) {
+    const btn = $("#refreshBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "↻ Refreshing…"; }
+    await loadLiveData();
+    renderLeaderboard();
+    renderRosters();
+    renderTeamInfo();
+    renderSync();
+    if (btn) { btn.disabled = false; btn.textContent = "↻ Refresh data"; }
+    if (manual) {
+      toast(liveData && liveData.generatedAt ? "Live data refreshed." : "No live data published yet.");
+    }
   }
 
   async function loadLiveData() {
@@ -754,6 +779,7 @@
       reader.onerror = () => toast("Could not read that file.");
       reader.readAsText(f);
     });
+    $("#refreshBtn").addEventListener("click", () => refreshLiveData(true));
     $("#exportBtn").addEventListener("click", openExport);
     $("#exportClose").addEventListener("click", () => $("#exportModal").classList.remove("open"));
     $("#exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") $("#exportModal").classList.remove("open"); });

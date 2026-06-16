@@ -52,8 +52,7 @@ Goals scored are a **tiebreaker only** — they never add points. Standings sort
 │   └── world-cup-live.json        # written by the GitHub Action (live data)
 ├── scripts/fetchFootballData.mjs  # pulls football-data.org v4 → world-cup-live.json
 ├── .github/workflows/
-│   ├── update-football-data.yml   # scheduled + manual data refresh
-│   └── deploy-pages.yml           # deploy to GitHub Pages on push to main
+│   └── update-football-data.yml   # refresh live data every 15 min + on demand
 └── package.json                   # optional; no dependencies
 ```
 
@@ -121,11 +120,17 @@ To re-open drafting, set `"locked": false` (or restore the default file) and pus
 ## Enable GitHub Pages
 
 1. Repo **Settings → Pages**.
-2. **Source: GitHub Actions**.
-3. Push to `main` — the `Deploy to GitHub Pages` workflow publishes the site to
-   `https://chriscasensmith-source.github.io/World-Cup-Super-Fun-Time/`.
+2. **Source: Deploy from a branch** → Branch: **`main`** → Folder: **`/ (root)`** → Save.
+3. The site publishes to `https://chriscasensmith-source.github.io/World-Cup-Super-Fun-Time/`.
+
+> **Why "deploy from a branch" and not "GitHub Actions"?** The data workflow commits a fresh `world-cup-live.json` every 15 minutes. Branch-based Pages serves the repo contents directly, so each data commit is live immediately. (With the Actions source, commits pushed by the workflow's `GITHUB_TOKEN` don't trigger a redeploy, so live scores would go stale.) A `.nojekyll` file is included so `assets/` is served as-is.
 
 > The app uses **relative** fetch paths (`public/data/…`), so it works correctly under the `/World-Cup-Super-Fun-Time/` base path with no extra config.
+
+### How fresh are the scores?
+
+- The app **re-fetches** `world-cup-live.json` every time you open it, when you switch back to the tab, automatically every ~5 minutes while open, and via the **↻ Refresh data** button — all with `cache: "no-store"`, so you always see the latest committed data.
+- The committed file itself is refreshed by the **Update Football Data** workflow every **15 minutes** (and on demand). The browser never calls the API directly, so your key stays secret.
 
 ---
 
