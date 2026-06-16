@@ -292,6 +292,26 @@ main { padding: 20px 0 64px; }
 .dash-card-stats { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
 .dash-card-stats b { color: var(--text); }
 
+/* ----- group standings ----- */
+.gs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; }
+.gs-card { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; }
+.gs-head { padding: 9px 13px; font-weight: 800; font-size: 13px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.gs-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.gs-table th { text-align: center; color: var(--muted); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; padding: 6px 3px; border-bottom: 1px solid var(--line); }
+.gs-table th:nth-child(2) { text-align: left; }
+.gs-table td { text-align: center; padding: 6px 3px; border-bottom: 1px solid var(--line); }
+.gs-table tbody tr:last-child td { border-bottom: none; }
+.gs-table tbody tr { cursor: pointer; }
+.gs-table tbody tr:hover td { background: var(--panel-2); }
+.gs-pos { color: var(--muted); width: 18px; }
+.gs-team { display: flex; align-items: center; gap: 7px; text-align: left !important; min-width: 0; }
+.gs-team .flag { width: 22px; height: 15px; font-size: 11px; }
+.gs-team .gs-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 650; }
+.gs-pts { font-weight: 800; }
+.gs-adv td { background: rgba(52, 211, 153, 0.07); }
+.gs-adv .gs-pos { color: var(--brand); font-weight: 800; }
+.gs-owner { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 4px; flex-shrink: 0; }
+
 /* ----- team info panel ----- */
 .info-empty { color: var(--muted); font-size: 13.5px; text-align: center; padding: 40px 16px; }
 .info-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }

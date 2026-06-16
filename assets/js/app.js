@@ -252,6 +252,8 @@
     await loadLiveData();
     renderLeaderboard();
     renderRosters();
+    renderMyTeams();
+    renderGroupStandings();
     renderTeamInfo();
     renderSync();
     if (btn) { btn.disabled = false; btn.textContent = "↻ Refresh data"; }
@@ -361,6 +363,50 @@
 
   const num = (v) => (typeof v === "number" ? v : v == null ? null : (isNaN(+v) ? null : +v));
 
+  // Real World Cup group table per team (FIFA points: win 3, draw 1, loss 0).
+  // Prefers football-data.org's computed TOTAL standings, falling back to
+  // tallying finished group matches ourselves.
+  function buildStandings() {
+    const map = {};
+    TEAMS.forEach((t) => { map[t.id] = { pld: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 }; });
+
+    let used = false;
+    const total = liveData && Array.isArray(liveData.standings)
+      ? liveData.standings.find((s) => s.type === "TOTAL" && Array.isArray(s.table))
+      : null;
+    if (total) {
+      total.table.forEach((row) => {
+        const id = resolveTeamId(row.team && (row.team.name || row.team.shortName || row.team.tla));
+        if (!id || !map[id]) return;
+        map[id] = {
+          pld: row.playedGames || 0, w: row.won || 0, d: row.draw || 0, l: row.lost || 0,
+          gf: row.goalsFor || 0, ga: row.goalsAgainst || 0,
+          gd: row.goalDifference != null ? row.goalDifference : (row.goalsFor || 0) - (row.goalsAgainst || 0),
+          pts: row.points || 0
+        };
+        used = true;
+      });
+    }
+
+    if (!used && liveData && Array.isArray(liveData.matches)) {
+      liveData.matches.forEach((m) => {
+        if (m.stage !== "GROUP_STAGE" || m.status !== "FINISHED") return;
+        const ft = (m.score && m.score.fullTime) || {};
+        const hg = num(ft.home), ag = num(ft.away);
+        if (hg == null || ag == null) return;
+        const hid = resolveTeamId(m.homeTeam && m.homeTeam.name);
+        const aid = resolveTeamId(m.awayTeam && m.awayTeam.name);
+        [[hid, hg, ag], [aid, ag, hg]].forEach(([id, gf, ga]) => {
+          if (!id || !map[id]) return;
+          const r = map[id];
+          r.pld++; r.gf += gf; r.ga += ga; r.gd = r.gf - r.ga;
+          if (gf > ga) { r.w++; r.pts += 3; } else if (gf === ga) { r.d++; r.pts += 1; } else { r.l++; }
+        });
+      });
+    }
+    return map;
+  }
+
   const teamScore = (teamId) => (scoreIndex[teamId] ? scoreIndex[teamId].points : 0);
   const teamGoals = (teamId) => (scoreIndex[teamId] ? scoreIndex[teamId].goals : 0);
 
@@ -382,6 +428,7 @@
     renderTeamBoard();
     renderRosters();
     renderMyTeams();
+    renderGroupStandings();
     renderTeamInfo();
     renderSync();
   }
@@ -728,6 +775,40 @@
     wrap.innerHTML = html;
   }
 
+  // Live World Cup group tables, bucketed into the 12 groups.
+  function renderGroupStandings() {
+    const wrap = $("#groupStandings");
+    if (!wrap) return;
+    const st = buildStandings();
+    const groups = [...new Set(TEAMS.map((t) => t.group))].sort();
+    let html = "";
+    groups.forEach((g) => {
+      const teams = TEAMS.filter((t) => t.group === g).slice().sort((a, b) => {
+        const A = st[a.id], B = st[b.id];
+        return B.pts - A.pts || B.gd - A.gd || B.gf - A.gf || a.name.localeCompare(b.name);
+      });
+      html += `<div class="gs-card"><div class="gs-head">Group ${g}</div>
+        <table class="gs-table"><thead><tr>
+          <th></th><th>Team</th><th>Pld</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+        </tr></thead><tbody>`;
+      teams.forEach((t, i) => {
+        const r = st[t.id];
+        const pick = pickForTeam(t.id);
+        const ownerDot = pick
+          ? `<span class="gs-owner" style="background:${ownerById[pick.ownerId].accent}" title="${ownerById[pick.ownerId].name}"></span>`
+          : "";
+        html += `<tr class="${i < 2 ? "gs-adv" : ""}" data-team="${t.id}">
+          <td class="gs-pos">${i + 1}</td>
+          <td class="gs-team">${flagHtml(t)}<span class="gs-name">${t.name}</span>${ownerDot}</td>
+          <td>${r.pld}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+          <td>${r.gd > 0 ? "+" : ""}${r.gd}</td><td class="gs-pts">${r.pts}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+    wrap.innerHTML = html;
+  }
+
   function renderSync() {
     const sync = $("#sync");
     if (liveData && liveData.generatedAt) {
@@ -971,6 +1052,13 @@
       const card = e.target.closest(".dash-card");
       if (!card) return;
       selectTeam(card.dataset.team);
+      const info = $("#teamInfoSection");
+      if (info && info.scrollIntoView) info.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    $("#groupStandings").addEventListener("click", (e) => {
+      const row = e.target.closest("tr[data-team]");
+      if (!row) return;
+      selectTeam(row.dataset.team);
       const info = $("#teamInfoSection");
       if (info && info.scrollIntoView) info.scrollIntoView({ behavior: "smooth", block: "start" });
     });
