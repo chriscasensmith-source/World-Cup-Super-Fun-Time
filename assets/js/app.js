@@ -522,6 +522,9 @@
 
     // buttons
     $("#undoBtn").disabled = !isEditable() || state.picks.length === 0;
+    // Hide Reset entirely once the draft is complete (or locked) so a finished
+    // draft can't be wiped by accident.
+    $("#resetBtn").style.display = (isDraftComplete() || state.locked) ? "none" : "";
     $("#resetBtn").disabled = state.locked || state.picks.length === 0;
     $("#saveProgressBtn").disabled = state.picks.length === 0;
     $("#importBtn").disabled = state.locked;
