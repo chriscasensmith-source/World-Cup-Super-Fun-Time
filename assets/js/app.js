@@ -22,7 +22,6 @@
   const SCORING = window.WC_SCORING;
   const TEAMS_PER_OWNER = 12;
   const TOTAL_PICKS = OWNERS.length * TEAMS_PER_OWNER; // 36
-  const STORAGE_KEY = "wcsft-draft-state-v1";
   const DRAFT_LOCK_URL = "public/data/draft-lock.json";
   const LIVE_DATA_URL = "public/data/world-cup-live.json";
 
@@ -41,6 +40,9 @@
   let scoreIndex = {};       // teamId -> { points, goals, wins, matches[], status }
   let filterText = "";
   let filterGroup = "";
+  let store = null;          // draft store: cloud (Supabase) or local (localStorage)
+  let deviceIdentity = "anyone"; // which owner is drafting on THIS device
+  const IDENTITY_KEY = "wcsft-identity";
 
   const $ = (sel) => document.querySelector(sel);
   const el = (tag, cls, html) => {
@@ -73,32 +75,107 @@
   //  Persistence
   // ========================================================================
 
-  function saveLocal() {
-    if (state.locked) return; // never overwrite from a locked view
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ draftOrder: state.draftOrder, picks: state.picks })
-      );
-    } catch (e) {
-      /* storage may be unavailable; non-fatal */
+  // A clean, validated snapshot of the draft for saving/sharing.
+  function snapshot() {
+    return {
+      draftOrder: state.draftOrder.slice(),
+      picks: state.picks
+        .slice()
+        .sort((a, b) => a.pickNumber - b.pickNumber)
+        .map((p) => ({ teamId: p.teamId, ownerId: p.ownerId, pickNumber: p.pickNumber }))
+    };
+  }
+
+  // Replace the in-memory draft from any state object (local, cloud, or import),
+  // validating teams/owners and enforcing the per-owner and total caps.
+  function applyState(s) {
+    if (!s) return;
+    if (Array.isArray(s.draftOrder) && s.draftOrder.length === OWNERS.length &&
+        s.draftOrder.every((id) => ownerById[id]) && new Set(s.draftOrder).size === OWNERS.length) {
+      state.draftOrder = s.draftOrder.slice();
+    }
+    if (Array.isArray(s.picks)) {
+      const seen = new Set();
+      const counts = {};
+      const out = [];
+      s.picks
+        .slice()
+        .sort((a, b) => (a.pickNumber || 0) - (b.pickNumber || 0))
+        .forEach((p) => {
+          if (!p || !teamById[p.teamId] || !ownerById[p.ownerId]) return;
+          if (seen.has(p.teamId)) return;
+          if ((counts[p.ownerId] || 0) >= TEAMS_PER_OWNER) return;
+          if (out.length >= TOTAL_PICKS) return;
+          seen.add(p.teamId);
+          counts[p.ownerId] = (counts[p.ownerId] || 0) + 1;
+          out.push({ teamId: p.teamId, ownerId: p.ownerId, pickNumber: out.length + 1 });
+        });
+      state.picks = out;
     }
   }
 
-  function loadLocal() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      if (Array.isArray(data.draftOrder) && data.draftOrder.length === OWNERS.length) {
-        state.draftOrder = data.draftOrder;
-      }
-      if (Array.isArray(data.picks)) {
-        // keep only valid, known picks
-        state.picks = data.picks.filter((p) => teamById[p.teamId] && ownerById[p.ownerId]);
-      }
-    } catch (e) {
-      /* corrupt storage; start fresh */
+  // Persist the current draft through the active store (cloud or local). On a
+  // cloud version conflict, re-sync to the authoritative remote state.
+  async function persist() {
+    if (state.locked || !store) return;
+    const res = await store.save(snapshot());
+    if (res && res.conflict) {
+      const fresh = await store.load();
+      if (fresh) { applyState(fresh); renderAll(); toast("Another device updated the draft — re-synced."); }
+    } else if (res && res.error) {
+      toast("Cloud save failed — check your connection.");
+    }
+  }
+
+  // Backwards-compatible name used throughout the mutating actions.
+  function saveLocal() { persist(); }
+
+  // ========================================================================
+  //  Device identity & sync mode
+  // ========================================================================
+
+  function readIdentity() {
+    try { return localStorage.getItem(IDENTITY_KEY) || "anyone"; } catch (e) { return "anyone"; }
+  }
+
+  function setupIdentitySelect() {
+    const sel = $("#identitySelect");
+    if (!sel) return;
+    OWNERS.forEach((o) => {
+      const opt = document.createElement("option");
+      opt.value = o.id;
+      opt.textContent = o.name;
+      sel.appendChild(opt);
+    });
+    sel.value = deviceIdentity;
+    sel.addEventListener("change", () => {
+      deviceIdentity = sel.value;
+      try { localStorage.setItem(IDENTITY_KEY, deviceIdentity); } catch (e) {}
+      renderAll();
+    });
+  }
+
+  // Whether THIS device may make the current pick. "anyone" (commissioner mode)
+  // can always draft on any turn; otherwise only the owner on the clock can.
+  function canDraftNow() {
+    if (!isEditable()) return false;
+    if (deviceIdentity === "anyone") return true;
+    return deviceIdentity === ownerForPick(currentPickNumber());
+  }
+
+  function renderSyncMode() {
+    const badge = $("#syncBadge");
+    if (!badge) return;
+    if (state.locked) { badge.style.display = "none"; return; }
+    badge.style.display = "";
+    if (store && store.mode === "cloud") {
+      badge.className = "badge local";
+      badge.innerHTML = `<span class="dot"></span> ☁ Cloud Synced`;
+      badge.title = "Picks sync live across all phones via Supabase.";
+    } else {
+      badge.className = "badge";
+      badge.innerHTML = `<span class="dot" style="background:var(--muted)"></span> 📱 This Device`;
+      badge.title = "Local mode — picks saved in this browser only. Add Supabase keys in assets/js/config.js to sync across phones.";
     }
   }
 
@@ -108,31 +185,77 @@
 
   async function init() {
     wireStaticControls();
+    deviceIdentity = readIdentity();
+    setupIdentitySelect();
+
     // Try the published lock file first. If it is unreachable (file://) we fall
-    // back to local draft mode.
+    // back to local/cloud draft mode.
     let lock = null;
     try {
       const res = await fetch(DRAFT_LOCK_URL, { cache: "no-store" });
       if (res.ok) lock = await res.json();
     } catch (e) {
-      console.info("[WCSFT] draft-lock.json not reachable; using local draft mode.");
+      console.info("[WCSFT] draft-lock.json not reachable; using local/cloud draft mode.");
     }
 
     if (lock && lock.locked === true) {
+      // Published, read-only draft — no store needed.
       state.locked = true;
       state.lockedAt = lock.lockedAt || null;
-      if (Array.isArray(lock.draftOrder) && lock.draftOrder.length === OWNERS.length) {
-        state.draftOrder = lock.draftOrder;
-      }
-      state.picks = (lock.picks || [])
-        .filter((p) => teamById[p.teamId] && ownerById[p.ownerId])
-        .sort((a, b) => (a.pickNumber || 0) - (b.pickNumber || 0));
+      applyState({ draftOrder: lock.draftOrder, picks: lock.picks });
     } else {
-      loadLocal();
+      // Live drafting: shared cloud room if Supabase is configured, else local.
+      store = await window.WCSFT_createStore();
+      const remote = await store.load();
+      const local = window.WCSFT_readLocalDraft && window.WCSFT_readLocalDraft();
+      const remoteHasDraft = remote && Array.isArray(remote.picks) && remote.picks.length > 0;
+      const localHasDraft = local && Array.isArray(local.picks) && local.picks.length > 0;
+
+      if (remoteHasDraft) {
+        applyState(remote);                                  // cloud is source of truth
+      } else if (localHasDraft) {
+        applyState(local);                                   // migrate an existing local draft
+        if (store.mode === "cloud") await store.save(snapshot());
+      } else if (remote) {
+        applyState(remote);                                  // empty-but-valid (default order)
+      }
+
+      // Live updates from other phones (or other tabs in local mode).
+      store.subscribe((remoteState) => {
+        if (state.locked) return;
+        applyState(remoteState);
+        renderAll();
+      });
     }
 
+    renderSyncMode();
     await loadLiveData();
     renderAll();
+
+    // Keep live scores fresh while the app is open: re-fetch the data file on
+    // an interval and whenever the tab is brought back to the foreground. (The
+    // browser only reads the committed JSON — it never calls the API directly,
+    // so the secret key is never exposed.)
+    setInterval(() => refreshLiveData(false), 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshLiveData(false);
+    });
+  }
+
+  // Re-pull world-cup-live.json and re-render the score-dependent UI without a
+  // full page reload.
+  async function refreshLiveData(manual) {
+    const btn = $("#refreshBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "↻ Refreshing…"; }
+    await loadLiveData();
+    renderLeaderboard();
+    renderRosters();
+    renderTeamInfo();
+    renderSync();
+    if (btn) { btn.disabled = false; btn.textContent = "↻ Refresh data"; }
+    if (manual) {
+      toast(liveData && liveData.generatedAt ? "Live data refreshed." : "No live data published yet.");
+    }
   }
 
   async function loadLiveData() {
@@ -168,7 +291,7 @@
     "cote divoire": "cote-divoire", "ivory coast": "cote-divoire",
     "czechia": "czechia", "czech republic": "czechia",
     "dr congo": "dr-congo", "congo dr": "dr-congo", "democratic republic of congo": "dr-congo",
-    "cabo verde": "cape-verde", "cape verde": "cape-verde",
+    "cabo verde": "cape-verde", "cape verde": "cape-verde", "cape verde islands": "cape-verde",
     "bosnia herzegovina": "bosnia", "bosnia and herzegovina": "bosnia",
     "curacao": "curacao"
   };
@@ -352,6 +475,7 @@
     $("#resetBtn").disabled = state.locked || state.picks.length === 0;
     $("#saveProgressBtn").disabled = state.picks.length === 0;
     $("#importBtn").disabled = state.locked;
+    $("#identitySelect").disabled = state.locked;
 
     // locked notice
     $("#lockedNote").style.display = state.locked ? "block" : "none";
@@ -495,12 +619,10 @@
           </div>
         </div>`;
     } else if (!pick && isEditable()) {
-      const oid = ownerForPick(currentPickNumber());
-      const o = ownerById[oid];
-      html += `
-        <div class="info-actions">
-          <button class="btn primary" id="draftBtn">Draft to ${o.name} (Pick #${currentPickNumber()})</button>
-        </div>`;
+      const o = ownerById[ownerForPick(currentPickNumber())];
+      html += canDraftNow()
+        ? `<div class="info-actions"><button class="btn primary" id="draftBtn">Draft to ${o.name} (Pick #${currentPickNumber()})</button></div>`
+        : `<div class="info-actions"><button class="btn primary" disabled>⏳ ${o.name} is on the clock</button></div>`;
     }
 
     panel.innerHTML = html;
@@ -541,6 +663,10 @@
 
   function draftCurrent(teamId) {
     if (!isEditable()) return;
+    if (!canDraftNow()) {
+      toast("Not your turn — " + ownerById[ownerForPick(currentPickNumber())].name + " is on the clock.");
+      return;
+    }
     if (pickForTeam(teamId)) return;
     const oid = ownerForPick(currentPickNumber());
     if (teamsForOwner(oid).length >= TEAMS_PER_OWNER) {
@@ -665,34 +791,8 @@
   function applyImported(data) {
     if (!data || typeof data !== "object") throw new Error("not a JSON object");
     if (!Array.isArray(data.picks)) throw new Error("missing \"picks\" array");
-
-    let order = state.draftOrder.slice();
-    if (Array.isArray(data.draftOrder) && data.draftOrder.length === OWNERS.length &&
-        data.draftOrder.every((id) => ownerById[id]) &&
-        new Set(data.draftOrder).size === OWNERS.length) {
-      order = data.draftOrder.slice();
-    }
-
-    const seen = new Set();
-    const counts = {};
-    const picks = [];
-    data.picks
-      .slice()
-      .sort((a, b) => (a.pickNumber || 0) - (b.pickNumber || 0))
-      .forEach((p) => {
-        if (!p || !teamById[p.teamId] || !ownerById[p.ownerId]) return; // skip unknown
-        if (seen.has(p.teamId)) return;                                  // dedupe teams
-        if ((counts[p.ownerId] || 0) >= TEAMS_PER_OWNER) return;         // owner cap
-        if (picks.length >= TOTAL_PICKS) return;                         // total cap
-        seen.add(p.teamId);
-        counts[p.ownerId] = (counts[p.ownerId] || 0) + 1;
-        picks.push({ teamId: p.teamId, ownerId: p.ownerId });
-      });
-    picks.forEach((p, i) => { p.pickNumber = i + 1; }); // re-sequence contiguously
-
-    state.draftOrder = order;
-    state.picks = picks;
-    saveLocal();
+    applyState(data); // validates teams/owners, dedupes, enforces caps, re-sequences
+    saveLocal();       // routes to cloud (shared) or local store
   }
 
   function doImport() {
@@ -754,6 +854,7 @@
       reader.onerror = () => toast("Could not read that file.");
       reader.readAsText(f);
     });
+    $("#refreshBtn").addEventListener("click", () => refreshLiveData(true));
     $("#exportBtn").addEventListener("click", openExport);
     $("#exportClose").addEventListener("click", () => $("#exportModal").classList.remove("open"));
     $("#exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") $("#exportModal").classList.remove("open"); });

@@ -5,7 +5,7 @@ name: Update Football Data
 on:
   workflow_dispatch: {}        # run manually from the Actions tab
   schedule:
-    - cron: "0 */6 * * *"      # every 6 hours
+    - cron: "*/15 * * * *"     # every 15 minutes (GitHub may delay scheduled runs under load)
 
 # Allow the workflow to push the updated JSON back to the repo.
 permissions:
@@ -38,7 +38,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [[ -n "$(git status --porcelain public/data/world-cup-live.json)" ]]; then
             git add public/data/world-cup-live.json
-            git commit -m "chore: refresh World Cup live data [skip ci]"
+            git commit -m "chore: refresh World Cup live data"
             git push
           else
             echo "No changes to live data."
