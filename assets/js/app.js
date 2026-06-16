@@ -42,6 +42,7 @@
   let filterGroup = "";
   let store = null;          // draft store: cloud (Supabase) or local (localStorage)
   let deviceIdentity = "anyone"; // which owner is drafting on THIS device
+  let dashboardOwnerId = null;   // which owner the "My Teams" dashboard is showing
   const IDENTITY_KEY = "wcsft-identity";
 
   const $ = (sel) => document.querySelector(sel);
@@ -151,6 +152,7 @@
     sel.addEventListener("change", () => {
       deviceIdentity = sel.value;
       try { localStorage.setItem(IDENTITY_KEY, deviceIdentity); } catch (e) {}
+      if (ownerById[deviceIdentity]) dashboardOwnerId = deviceIdentity; // focus dashboard on me
       renderAll();
     });
   }
@@ -379,6 +381,7 @@
     renderDraftControls();
     renderTeamBoard();
     renderRosters();
+    renderMyTeams();
     renderTeamInfo();
     renderSync();
   }
@@ -635,6 +638,96 @@
     })[stage] || stage;
   }
 
+  const STAGE_ORDER = ["GROUP_STAGE", "LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "THIRD_PLACE", "FINAL"];
+
+  // Derive a simple tournament status for a team from its match records.
+  function deriveStatus(sc) {
+    const matches = (sc && sc.matches) || [];
+    if (!matches.length) return { label: "Not started", cls: "" };
+    if (matches.some((m) => m.stage === "FINAL" && m.result === "w")) return { label: "🏆 Champion", cls: "champion" };
+    const lostKO = matches.filter((m) => m.stage !== "GROUP_STAGE" && m.result === "l");
+    if (lostKO.length) return { label: "Out · " + prettyStage(lostKO[lostKO.length - 1].stage), cls: "eliminated" };
+    const ko = matches.filter((m) => m.stage !== "GROUP_STAGE");
+    if (ko.length) {
+      const furthest = ko.reduce((a, m) => (STAGE_ORDER.indexOf(m.stage) > STAGE_ORDER.indexOf(a) ? m.stage : a), ko[0].stage);
+      return { label: "Advanced · " + prettyStage(furthest), cls: "advanced" };
+    }
+    const groupPlayed = matches.filter((m) => m.stage === "GROUP_STAGE" && m.result).length;
+    return groupPlayed >= 3
+      ? { label: "Group stage done", cls: "" }
+      : { label: "Group stage", cls: "" };
+  }
+
+  // "My Teams" owner dashboard: tabs to pick an owner, then their full squad.
+  function renderMyTeams() {
+    const tabsEl = $("#ownerTabs");
+    const wrap = $("#myTeams");
+    if (!tabsEl || !wrap) return;
+    if (!dashboardOwnerId || !ownerById[dashboardOwnerId]) {
+      dashboardOwnerId = deviceIdentity !== "anyone" && ownerById[deviceIdentity] ? deviceIdentity : OWNERS[0].id;
+    }
+
+    tabsEl.innerHTML = "";
+    OWNERS.forEach((o) => {
+      const t = ownerTotals(o.id);
+      const tab = el("button", "owner-tab");
+      tab.dataset.owner = o.id;
+      if (o.id === dashboardOwnerId) {
+        tab.style.background = o.accent + "22";
+        tab.style.borderColor = o.accent;
+      }
+      tab.innerHTML = `<span class="swatch" style="background:${o.accent}"></span>${o.name}
+        <span style="color:var(--muted);font-weight:700">${t.points}p · ${t.count}/${TEAMS_PER_OWNER}</span>`;
+      tabsEl.appendChild(tab);
+    });
+
+    const o = ownerById[dashboardOwnerId];
+    const picks = teamsForOwner(o.id).slice().sort((a, b) => a.pickNumber - b.pickNumber);
+    const totals = ownerTotals(o.id);
+    const ranked = OWNERS.map((x) => ({ id: x.id, ...ownerTotals(x.id) }))
+      .sort((a, b) => b.points - a.points || b.goals - a.goals);
+    const rank = ranked.findIndex((x) => x.id === o.id) + 1;
+
+    let html = `
+      <div class="dash-head" style="border-left:5px solid ${o.accent}">
+        <div style="flex:1;min-width:140px">
+          <div class="dh-name">${o.name}</div>
+          <div style="color:var(--muted);font-size:12.5px">Rank #${rank} of ${OWNERS.length}</div>
+        </div>
+        <div class="dash-stat"><div class="v">${totals.points}</div><div class="k">Points</div></div>
+        <div class="dash-stat"><div class="v">${totals.goals}</div><div class="k">Goals</div></div>
+        <div class="dash-stat"><div class="v">${picks.length}/${TEAMS_PER_OWNER}</div><div class="k">Teams</div></div>
+      </div>`;
+
+    if (picks.length === 0) {
+      html += `<div class="empty">No teams drafted yet for ${o.name}.</div>`;
+      wrap.innerHTML = html;
+      return;
+    }
+
+    html += `<div class="dash-grid">`;
+    picks.forEach((p) => {
+      const t = teamById[p.teamId];
+      const sc = scoreIndex[t.id] || { points: 0, goals: 0, groupWins: 0, knockoutWins: 0, matches: [] };
+      const st = deriveStatus(sc);
+      html += `
+        <div class="dash-card" data-team="${t.id}">
+          <div class="dash-card-top">${flagHtml(t)}<span class="dc-name">${t.name}</span><span class="dc-score">${sc.points} pt</span></div>
+          <div class="dash-card-mid">
+            <span class="pill grp">Grp ${t.group} · #${p.pickNumber}</span>
+            <span class="status-tag ${st.cls}">${st.label}</span>
+          </div>
+          <div class="dash-card-stats">
+            <span><b>${sc.goals}</b> goals</span>
+            <span><b>${sc.groupWins}</b> grp W</span>
+            <span><b>${sc.knockoutWins || 0}</b> KO W</span>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+    wrap.innerHTML = html;
+  }
+
   function renderSync() {
     const sync = $("#sync");
     if (liveData && liveData.generatedAt) {
@@ -869,6 +962,17 @@
     $("#rosters").addEventListener("click", (e) => {
       const row = e.target.closest(".roster-pick");
       if (row) selectTeam(row.dataset.team);
+    });
+    $("#ownerTabs").addEventListener("click", (e) => {
+      const tab = e.target.closest(".owner-tab");
+      if (tab) { dashboardOwnerId = tab.dataset.owner; renderMyTeams(); }
+    });
+    $("#myTeams").addEventListener("click", (e) => {
+      const card = e.target.closest(".dash-card");
+      if (!card) return;
+      selectTeam(card.dataset.team);
+      const info = $("#teamInfoSection");
+      if (info && info.scrollIntoView) info.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     $("#orderList").addEventListener("click", (e) => {
       const up = e.target.closest("[data-up]");
