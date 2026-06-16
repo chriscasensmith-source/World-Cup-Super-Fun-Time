@@ -16,6 +16,7 @@ A polished, mobile-friendly, **static** web app for running a **2026 Men's World
 - **Lock & publish**: export a `draft-lock.json`, commit it, and the live site becomes a frozen, read-only board everyone sees identically.
 - **Live scoring**: a GitHub Action periodically pulls World Cup data and the board computes points, goals, standings, and knockout progress.
 - **"My Teams" dashboard**: per-owner view of all 12 drafted teams with each team's points, goals, group/knockout wins, and live status (advanced / out / champion), plus the owner's combined totals and rank.
+- **Live group standings**: real World Cup group tables (W-D-L, goals, GD, points), top 2 highlighted as advancing, with a dot showing which owner drafted each team.
 
 ### Owners
 1. **Fookin Wanka**
