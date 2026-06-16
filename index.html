@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260616f" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260616g" />
 </head>
 <body>
   <!-- ============================ HERO ============================ -->
@@ -20,11 +20,7 @@
       <span class="logo">⚽</span>
       <div class="title-block">
         <h1 class="title">World Cup Super Fun Time</h1>
-        <p class="subtitle">2026 Men's World Cup snake draft · 3 owners · 12 teams each</p>
-      </div>
-      <div class="hero-actions">
-        <span id="syncBadge" class="badge" title="Drafting sync mode"><span class="dot"></span> Local</span>
-        <span id="modeBadge" class="badge local"><span class="dot"></span> Local Draft Mode</span>
+        <p class="subtitle">2026 World Cup Draft</p>
       </div>
     </div>
   </header>
@@ -46,9 +42,15 @@
         <span class="hint">Ranked by total points, then total goals as the tiebreaker.</span>
       </div>
       <div id="leaderboard" class="leaderboard"></div>
-      <div class="sync-row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:18px;">
-        <div id="sync" class="sync" style="margin-top:0;"></div>
-        <button id="refreshBtn" class="btn sm ghost">↻ Refresh data</button>
+
+      <!-- data status / admin -->
+      <div class="card pad data-status">
+        <div class="ds-grid">
+          <div class="ds-item"><div class="ds-k">Last updated</div><div class="ds-v" id="dsUpdated">—</div></div>
+          <div class="ds-item"><div class="ds-k">Data source</div><div class="ds-v" id="dsSource">—</div></div>
+          <div class="ds-item"><div class="ds-k">Status</div><div class="ds-v" id="dsSync">—</div></div>
+        </div>
+        <button id="refreshBtn" class="btn ds-refresh">↻ Refresh Data</button>
       </div>
     </section>
 
@@ -222,9 +224,18 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="assets/js/config.js?v=20260616f"></script>
-  <script src="assets/js/teams.js?v=20260616f"></script>
-  <script src="assets/js/sync.js?v=20260616f"></script>
-  <script src="assets/js/app.js?v=20260616f"></script>
+  <!-- ============================ MOBILE BOTTOM NAV ============================ -->
+  <nav class="bottomnav" id="bottomnav" aria-label="Primary mobile navigation">
+    <button class="bnav active" data-tab="leaderboard"><span class="bi">🏆</span><span class="bl">Leaders</span></button>
+    <button class="bnav" data-tab="standings"><span class="bi">📊</span><span class="bl">Standings</span></button>
+    <button class="bnav" data-tab="myteams"><span class="bi">🧑‍🤝‍🧑</span><span class="bl">My Teams</span></button>
+    <button class="bnav" data-tab="draft"><span class="bi">🎯</span><span class="bl">Draft</span></button>
+    <button class="bnav" data-tab="rules"><span class="bi">📖</span><span class="bl">Rules</span></button>
+  </nav>
+
+  <script src="assets/js/config.js?v=20260616g"></script>
+  <script src="assets/js/teams.js?v=20260616g"></script>
+  <script src="assets/js/sync.js?v=20260616g"></script>
+  <script src="assets/js/app.js?v=20260616g"></script>
 </body>
 </html>

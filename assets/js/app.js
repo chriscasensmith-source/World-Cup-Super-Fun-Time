@@ -255,27 +255,34 @@
   async function refreshLiveData(manual) {
     const btn = $("#refreshBtn");
     if (btn) { btn.disabled = true; btn.textContent = "↻ Refreshing…"; }
-    await loadLiveData();
+    const ok = await loadLiveData();
+    // Recalculate everything that depends on results/standings.
     renderLeaderboard();
     renderRosters();
     renderMyTeams();
     renderGroupStandings();
     renderTeamInfo();
-    renderSync();
-    if (btn) { btn.disabled = false; btn.textContent = "↻ Refresh data"; }
+    renderDataStatus();
+    if (btn) { btn.disabled = false; btn.textContent = "↻ Refresh Data"; }
     if (manual) {
-      toast(liveData && liveData.generatedAt ? "Live data refreshed." : "No live data published yet.");
+      toast(ok ? "Data refreshed." : "Couldn't refresh data. Showing last saved results.");
     }
   }
 
+  // Fetch the latest published results/standings. Returns true on success.
+  // On failure it keeps whatever data was already loaded (never wipes it).
   async function loadLiveData() {
     try {
       const res = await fetch(LIVE_DATA_URL, { cache: "no-store" });
-      if (res.ok) liveData = await res.json();
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      liveData = await res.json();
+      buildScoreIndex();
+      return true;
     } catch (e) {
-      liveData = null;
+      console.info("[WCSFT] live data refresh failed; keeping last saved results.", e);
+      buildScoreIndex(); // recompute from whatever we have (may be null on first load)
+      return false;
     }
-    buildScoreIndex();
   }
 
   // ========================================================================
@@ -436,7 +443,7 @@
     renderMyTeams();
     renderGroupStandings();
     renderTeamInfo();
-    renderSync();
+    renderDataStatus();
   }
 
   function flagHtml(team) {
@@ -446,16 +453,10 @@
   }
 
   function renderModeBadge() {
-    const badge = $("#modeBadge");
-    if (state.locked) {
-      badge.className = "badge locked";
-      const when = state.lockedAt ? new Date(state.lockedAt).toLocaleDateString() : "";
-      badge.innerHTML = `<span class="dot"></span> Draft Locked${when ? " · " + when : ""}`;
-    } else {
-      badge.className = "badge local";
-      badge.innerHTML = `<span class="dot"></span> Local Draft Mode`;
-    }
-    $("#exportBtn").disabled = false; // export is always available as a convenience
+    // The header badge was removed for a cleaner mobile look; lock state now
+    // lives in the data-status area and the Draft tab's locked note.
+    const ex = $("#exportBtn");
+    if (ex) ex.disabled = false; // export is always available as a convenience
   }
 
   function renderLeaderboard() {
@@ -798,7 +799,9 @@
       });
       html += `<div class="gs-card"><div class="gs-head">Group ${g}</div>
         <table class="gs-table"><thead><tr>
-          <th></th><th>Team</th><th>Pld</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+          <th></th><th>Team</th>
+          <th class="gs-col">Pld</th><th class="gs-col">W</th><th class="gs-col">D</th><th class="gs-col">L</th>
+          <th class="gs-record">W-D-L</th><th>GD</th><th>Pts</th>
         </tr></thead><tbody>`;
       teams.forEach((t, i) => {
         const r = st[t.id];
@@ -809,7 +812,8 @@
         html += `<tr class="${i < 2 ? "gs-adv" : ""}" data-team="${t.id}">
           <td class="gs-pos">${i + 1}</td>
           <td class="gs-team">${flagHtml(t)}<span class="gs-name">${t.name}</span>${ownerDot}</td>
-          <td>${r.pld}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+          <td class="gs-col">${r.pld}</td><td class="gs-col">${r.w}</td><td class="gs-col">${r.d}</td><td class="gs-col">${r.l}</td>
+          <td class="gs-record">${r.w}-${r.d}-${r.l}</td>
           <td>${r.gd > 0 ? "+" : ""}${r.gd}</td><td class="gs-pts">${r.pts}</td>
         </tr>`;
       });
@@ -818,19 +822,27 @@
     wrap.innerHTML = html;
   }
 
-  function renderSync() {
-    const sync = $("#sync");
-    if (liveData && liveData.generatedAt) {
-      const when = new Date(liveData.generatedAt).toLocaleString();
-      const nMatches = Array.isArray(liveData.matches) ? liveData.matches.length : 0;
-      const nTeams = Array.isArray(liveData.teams) ? liveData.teams.length : 0;
-      const hasErr = Array.isArray(liveData.errors) && liveData.errors.length;
-      sync.innerHTML = `
-        <span class="dot ${hasErr ? "warn" : "ok"}"></span>
-        Live data from <b>${liveData.source || "football-data.org"}</b> · ${nTeams} teams · ${nMatches} matches · updated ${when}
-        ${hasErr ? " · ⚠ some endpoints errored" : ""}`;
-    } else {
-      sync.innerHTML = `<span class="dot warn"></span> Live data not loaded yet. Scores show 0 until the GitHub Action populates <b>public/data/world-cup-live.json</b>.`;
+  function renderDataStatus() {
+    const upd = $("#dsUpdated"), src = $("#dsSource"), syn = $("#dsSync");
+    if (upd) {
+      upd.textContent = liveData && liveData.generatedAt
+        ? new Date(liveData.generatedAt).toLocaleString()
+        : "Not loaded yet";
+    }
+    if (src) {
+      if (liveData) {
+        const nMatches = Array.isArray(liveData.matches) ? liveData.matches.length : 0;
+        const nTeams = Array.isArray(liveData.teams) ? liveData.teams.length : 0;
+        src.textContent = `${liveData.source || "football-data.org"} · ${nTeams} teams · ${nMatches} matches`;
+      } else {
+        src.textContent = "—";
+      }
+    }
+    if (syn) {
+      const parts = [store && store.mode === "cloud" ? "☁ Cloud synced" : "📱 This device"];
+      if (state.locked) parts.push("🔒 Locked");
+      syn.textContent = parts.join(" · ");
+      syn.className = "ds-v" + (store && store.mode === "cloud" ? " ds-ok" : "");
     }
   }
 
@@ -853,11 +865,13 @@
     if (modal) modal.classList.remove("open");
   }
 
-  // ---- tab navigation ------------------------------------------------------
+  // ---- tab navigation (top tabs + mobile bottom nav stay in sync) ----------
   function showTab(name) {
-    const tabs = document.querySelectorAll(".tab");
+    [".tab", ".bnav"].forEach((sel) => {
+      const els = document.querySelectorAll(sel);
+      if (els.forEach) els.forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+    });
     const panels = document.querySelectorAll(".tab-panel");
-    if (tabs.forEach) tabs.forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
     if (panels.forEach) panels.forEach((p) => p.classList.toggle("active", p.dataset.panel === name));
     try { localStorage.setItem("wcsft-tab", name); } catch (e) {}
     if (window.scrollTo) window.scrollTo({ top: 0, behavior: "auto" });
@@ -1060,6 +1074,10 @@
     $("#tabbar").addEventListener("click", (e) => {
       const tab = e.target.closest(".tab");
       if (tab) showTab(tab.dataset.tab);
+    });
+    $("#bottomnav").addEventListener("click", (e) => {
+      const b = e.target.closest(".bnav");
+      if (b) showTab(b.dataset.tab);
     });
     $("#teamModalClose").addEventListener("click", closeTeamModal);
     $("#teamModal").addEventListener("click", (e) => { if (e.target.id === "teamModal") closeTeamModal(); });
