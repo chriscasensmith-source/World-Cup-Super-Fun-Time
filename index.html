@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260616d" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260616f" />
 </head>
 <body>
   <!-- ============================ HERO ============================ -->
@@ -20,31 +20,64 @@
       <span class="logo">⚽</span>
       <div class="title-block">
         <h1 class="title">World Cup Super Fun Time</h1>
-        <p class="subtitle">2026 Men's World Cup snake draft · 3 owners · 12 teams each · group wins + knockout bonuses</p>
+        <p class="subtitle">2026 Men's World Cup snake draft · 3 owners · 12 teams each</p>
       </div>
       <div class="hero-actions">
         <span id="syncBadge" class="badge" title="Drafting sync mode"><span class="dot"></span> Local</span>
         <span id="modeBadge" class="badge local"><span class="dot"></span> Local Draft Mode</span>
-        <button id="exportBtn" class="btn primary">⬇ Export Lock JSON</button>
       </div>
     </div>
   </header>
 
+  <!-- ============================ NAV TABS ============================ -->
+  <nav class="tabbar" id="tabbar" aria-label="Primary">
+    <button class="tab active" data-tab="leaderboard">🏆 Leaderboard</button>
+    <button class="tab" data-tab="standings">📊 Standings</button>
+    <button class="tab" data-tab="myteams">🧑‍🤝‍🧑 My Teams</button>
+    <button class="tab" data-tab="draft">🎯 Draft</button>
+    <button class="tab" data-tab="rules">📖 Rules</button>
+  </nav>
+
   <main class="wrap">
-    <!-- ===================== LEADERBOARD ===================== -->
-    <section class="section" id="leaderboard-section">
+    <!-- ===================== TAB: LEADERBOARD ===================== -->
+    <section class="tab-panel active" data-panel="leaderboard">
       <div class="section-head">
         <h2>🏆 Owner Leaderboard</h2>
-        <span class="hint">Sorted by total points, then total goals scored as the tiebreaker.</span>
+        <span class="hint">Ranked by total points, then total goals as the tiebreaker.</span>
       </div>
       <div id="leaderboard" class="leaderboard"></div>
+      <div class="sync-row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:18px;">
+        <div id="sync" class="sync" style="margin-top:0;"></div>
+        <button id="refreshBtn" class="btn sm ghost">↻ Refresh data</button>
+      </div>
     </section>
 
-    <!-- ===================== DRAFT CONTROLS ===================== -->
-    <section class="section">
+    <!-- ===================== TAB: STANDINGS ===================== -->
+    <section class="tab-panel" data-panel="standings">
+      <div class="section-head">
+        <h2>📊 Group Standings</h2>
+        <span class="hint">Live World Cup group tables — top 2 (green) advance. Tap a team for its profile; the colored dot marks its draft owner.</span>
+      </div>
+      <div id="groupStandings" class="gs-grid"></div>
+    </section>
+
+    <!-- ===================== TAB: MY TEAMS ===================== -->
+    <section class="tab-panel" data-panel="myteams">
+      <div class="section-head">
+        <h2>🧑‍🤝‍🧑 My Teams</h2>
+        <span class="hint">Each owner's full squad and how it's performing. Tap a team for its full profile.</span>
+      </div>
+      <div class="card pad">
+        <div id="ownerTabs" class="owner-tabs"></div>
+        <div id="myTeams"></div>
+      </div>
+    </section>
+
+    <!-- ===================== TAB: DRAFT ===================== -->
+    <section class="tab-panel" data-panel="draft">
       <div class="section-head">
         <h2>🎯 Draft Control Center</h2>
-        <span class="hint">Snake order is editable until you lock. The current owner is enforced for each pick.</span>
+        <span class="hint">Snake order is editable until you lock. Each pick is enforced to the owner on the clock.</span>
       </div>
       <div class="card pad">
         <div id="pickbar" class="pickbar"></div>
@@ -65,18 +98,16 @@
             <button id="resetBtn" class="btn ghost">⟲ Reset Draft</button>
             <button id="saveProgressBtn" class="btn ghost">💾 Save Draft (JSON)</button>
             <button id="importBtn" class="btn ghost">⬆ Import Draft JSON</button>
+            <button id="exportBtn" class="btn primary">⬇ Export Lock JSON</button>
             <div id="lockedNote" class="locked-note" style="display:none">
               🔒 This draft is locked &amp; published. All editing controls are disabled — everyone sees the same board.
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- ===================== BOARD + INFO ===================== -->
-    <div class="grid-main section">
       <!-- available teams -->
-      <section class="card pad">
+      <section class="card pad" style="margin-top:18px;">
         <div class="section-head">
           <h2>🌍 Available Teams</h2>
           <span class="hint" id="availCount"></span>
@@ -88,45 +119,16 @@
         <div id="teamBoard" class="team-board"></div>
       </section>
 
-      <!-- team info panel -->
-      <section class="card pad" id="teamInfoSection">
-        <div class="section-head"><h2>📋 Team Info</h2></div>
-        <div id="teamInfo"></div>
-      </section>
-    </div>
-
-    <!-- ===================== ROSTERS ===================== -->
-    <section class="section">
-      <div class="section-head">
+      <!-- rosters -->
+      <div class="section-head" style="margin-top:22px;">
         <h2>👥 Owner Rosters</h2>
         <span class="hint">Tap any drafted team to open its profile.</span>
       </div>
       <div id="rosters" class="rosters"></div>
     </section>
 
-    <!-- ===================== MY TEAMS DASHBOARD ===================== -->
-    <section class="section">
-      <div class="section-head">
-        <h2>🧑‍🤝‍🧑 My Teams</h2>
-        <span class="hint">Each owner's full squad and how it's performing. Tap a team for its full profile.</span>
-      </div>
-      <div class="card pad">
-        <div id="ownerTabs" class="owner-tabs"></div>
-        <div id="myTeams"></div>
-      </div>
-    </section>
-
-    <!-- ===================== GROUP STANDINGS ===================== -->
-    <section class="section">
-      <div class="section-head">
-        <h2>📊 Group Standings</h2>
-        <span class="hint">Live World Cup group tables — top 2 (green) advance. Tap a team for its profile. A colored dot marks its draft owner.</span>
-      </div>
-      <div id="groupStandings" class="gs-grid"></div>
-    </section>
-
-    <!-- ===================== RULES ===================== -->
-    <section class="section">
+    <!-- ===================== TAB: RULES ===================== -->
+    <section class="tab-panel" data-panel="rules">
       <div class="section-head"><h2>📖 How It Works</h2></div>
       <div class="card pad">
         <div class="rules-grid">
@@ -157,22 +159,29 @@
           <div>
             <h3>🔒 Lock &amp; Publish</h3>
             <ul>
-              <li>Draft locally on one device — picks save to your browser automatically.</li>
-              <li>When done, hit <b>Export Lock JSON</b>.</li>
+              <li>Draft on one device (or sync across phones) — picks save automatically.</li>
+              <li>When done, hit <b>Export Lock JSON</b> on the Draft tab.</li>
               <li>Replace <b>public/data/draft-lock.json</b> with it and push.</li>
               <li>Once <code>"locked": true</code>, every visitor sees the same frozen draft.</li>
               <li>Live scores update from the football-data.org GitHub Action.</li>
             </ul>
           </div>
         </div>
-        <div class="sync-row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:26px;">
-          <div id="sync" class="sync" style="margin-top:0;"></div>
-          <button id="refreshBtn" class="btn sm ghost">↻ Refresh data</button>
-        </div>
-        <p class="footer-note">World Cup Super Fun Time · static GitHub Pages app · data seeded for the 2026 tournament &amp; refreshed from football-data.org.</p>
+        <p class="footer-note">World Cup Super Fun Time · static GitHub Pages app · refreshed from football-data.org.</p>
       </div>
     </section>
   </main>
+
+  <!-- ===================== TEAM INFO MODAL ===================== -->
+  <div id="teamModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
+      <div class="modal-head">
+        <h3 id="teamModalTitle">Team Profile</h3>
+        <button id="teamModalClose" class="btn sm ghost" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body"><div id="teamInfo"></div></div>
+    </div>
+  </div>
 
   <!-- ===================== EXPORT MODAL ===================== -->
   <div id="exportModal" class="modal-backdrop">
@@ -213,9 +222,9 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="assets/js/config.js?v=20260616d"></script>
-  <script src="assets/js/teams.js?v=20260616d"></script>
-  <script src="assets/js/sync.js?v=20260616d"></script>
-  <script src="assets/js/app.js?v=20260616d"></script>
+  <script src="assets/js/config.js?v=20260616f"></script>
+  <script src="assets/js/teams.js?v=20260616f"></script>
+  <script src="assets/js/sync.js?v=20260616f"></script>
+  <script src="assets/js/app.js?v=20260616f"></script>
 </body>
 </html>
