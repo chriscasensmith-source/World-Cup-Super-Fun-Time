@@ -327,7 +327,7 @@
   function buildScoreIndex() {
     scoreIndex = {};
     TEAMS.forEach((t) => {
-      scoreIndex[t.id] = { points: 0, goals: 0, groupWins: 0, knockoutWins: 0, matches: [], status: null };
+      scoreIndex[t.id] = { points: 0, goals: 0, groupWins: 0, knockoutWins: 0, matches: [], status: null, live: null };
     });
     if (!liveData || !Array.isArray(liveData.matches)) return;
 
@@ -340,12 +340,14 @@
       const hg = num(ft.home);
       const ag = num(ft.away);
       const played = m.status === "FINISHED" && hg != null && ag != null;
+      const isLive = (m.status === "IN_PLAY" || m.status === "PAUSED" || m.status === "SUSPENDED") && hg != null && ag != null;
       const stage = m.stage || "GROUP_STAGE";
       const isGroup = stage === "GROUP_STAGE";
 
       [["home", homeId, hg, ag], ["away", awayId, ag, hg]].forEach(([side, tid, gf, ga]) => {
         if (!tid || !scoreIndex[tid]) return;
         const rec = scoreIndex[tid];
+        const opp = side === "home" ? (m.awayTeam && m.awayTeam.name) : (m.homeTeam && m.homeTeam.name);
         if (played) {
           rec.goals += gf;
           const won = gf > ga;
@@ -357,18 +359,14 @@
             rec.points += knockoutPoints(stage);
             if (stage === "FINAL") rec.status = "champion";
           }
-          rec.matches.push({
-            stage, gf, ga,
-            opp: side === "home" ? (m.awayTeam && m.awayTeam.name) : (m.homeTeam && m.homeTeam.name),
-            result: won ? "w" : draw ? "d" : "l"
-          });
+          rec.matches.push({ stage, gf, ga, opp, result: won ? "w" : draw ? "d" : "l" });
+        } else if (isLive) {
+          // Show the in-progress score, but DON'T add to points/goals/wins —
+          // those only count once a match is FINISHED.
+          rec.live = { gf, ga, opp, stage };
+          rec.matches.push({ stage, gf, ga, opp, result: null, live: true });
         } else {
-          rec.matches.push({
-            stage,
-            opp: side === "home" ? (m.awayTeam && m.awayTeam.name) : (m.homeTeam && m.homeTeam.name),
-            result: null,
-            utcDate: m.utcDate || null
-          });
+          rec.matches.push({ stage, opp, result: null, utcDate: m.utcDate || null });
         }
       });
     });
@@ -626,9 +624,11 @@
     const sc = scoreIndex[t.id] || { points: 0, goals: 0, groupWins: 0, matches: [], status: null };
     const owner = pick ? ownerById[pick.ownerId] : null;
 
-    const statusTag = sc.status === "champion"
-      ? `<span class="status-tag champion">🏆 Champion</span>`
-      : `<span class="status-tag">In progress</span>`;
+    const statusTag = sc.live
+      ? `<span class="status-tag live">LIVE ${sc.live.gf}-${sc.live.ga}</span>`
+      : sc.status === "champion"
+        ? `<span class="status-tag champion">🏆 Champion</span>`
+        : `<span class="status-tag">In progress</span>`;
 
     let html = `
       <div class="info-head">
@@ -652,7 +652,9 @@
       html += `<div class="section-head" style="margin-top:16px"><h2 style="font-size:14px">Matches</h2></div><div class="match-list">`;
       sc.matches.forEach((mt) => {
         const stageLabel = prettyStage(mt.stage);
-        if (mt.result) {
+        if (mt.live) {
+          html += `<div class="match"><span class="stage">${stageLabel}</span><span class="mvs">vs ${mt.opp || "TBD"}</span><span class="res live">LIVE ${mt.gf}–${mt.ga}</span></div>`;
+        } else if (mt.result) {
           html += `<div class="match"><span class="stage">${stageLabel}</span><span class="mvs">vs ${mt.opp || "TBD"}</span><span class="res ${mt.result}">${mt.gf}–${mt.ga}</span></div>`;
         } else {
           const when = mt.utcDate ? new Date(mt.utcDate).toLocaleDateString() : "TBD";
@@ -699,6 +701,7 @@
 
   // Derive a simple tournament status for a team from its match records.
   function deriveStatus(sc) {
+    if (sc && sc.live) return { label: `LIVE ${sc.live.gf}-${sc.live.ga}`, cls: "live" };
     const matches = (sc && sc.matches) || [];
     if (!matches.length) return { label: "Not started", cls: "" };
     if (matches.some((m) => m.stage === "FINAL" && m.result === "w")) return { label: "🏆 Champion", cls: "champion" };

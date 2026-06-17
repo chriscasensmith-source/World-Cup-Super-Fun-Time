@@ -370,6 +370,18 @@ main { padding: 20px 0 64px; }
 .status-tag.champion { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
 .status-tag.advanced { background: rgba(52, 211, 153, 0.16); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.4); }
 .status-tag.eliminated { background: rgba(248, 113, 113, 0.14); color: #fca5a5; border-color: rgba(248, 113, 113, 0.4); }
+.status-tag.live { background: rgba(52, 211, 153, 0.16); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.45); }
+.status-tag.live::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brand); margin-right: 6px; vertical-align: middle;
+  animation: livepulse 1.2s infinite;
+}
+@keyframes livepulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+  70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+.match .res.live { color: var(--brand); font-weight: 800; }
 
 .info-actions { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
 .move-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
