@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-06-18T04:27:45.815Z",
+  "generatedAt": "2026-06-18T09:05:18.643Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -12621,7 +12621,7 @@
       "matchday": 1,
       "stage": "GROUP_STAGE",
       "group": "GROUP_K",
-      "lastUpdated": "2026-06-17T19:57:01Z",
+      "lastUpdated": "2026-06-18T08:25:01Z",
       "homeTeam": {
         "id": 765,
         "name": "Portugal",
@@ -12687,7 +12687,7 @@
       "matchday": 1,
       "stage": "GROUP_STAGE",
       "group": "GROUP_L",
-      "lastUpdated": "2026-06-17T22:05:39Z",
+      "lastUpdated": "2026-06-18T08:25:01Z",
       "homeTeam": {
         "id": 770,
         "name": "England",
@@ -12753,7 +12753,7 @@
       "matchday": 1,
       "stage": "GROUP_STAGE",
       "group": "GROUP_L",
-      "lastUpdated": "2026-06-18T01:09:31Z",
+      "lastUpdated": "2026-06-18T08:25:01Z",
       "homeTeam": {
         "id": 763,
         "name": "Ghana",
@@ -12819,7 +12819,7 @@
       "matchday": 1,
       "stage": "GROUP_STAGE",
       "group": "GROUP_K",
-      "lastUpdated": "2026-06-18T04:09:40Z",
+      "lastUpdated": "2026-06-18T08:25:01Z",
       "homeTeam": {
         "id": 8070,
         "name": "Uzbekistan",
