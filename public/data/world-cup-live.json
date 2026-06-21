@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-06-21T19:29:07.084Z",
+  "generatedAt": "2026-06-21T20:55:13.489Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -13677,7 +13677,7 @@
       "matchday": 2,
       "stage": "GROUP_STAGE",
       "group": "GROUP_H",
-      "lastUpdated": "2026-06-21T18:07:46Z",
+      "lastUpdated": "2026-06-21T20:36:54Z",
       "homeTeam": {
         "id": 760,
         "name": "Spain",
@@ -13696,7 +13696,7 @@
         "winner": "HOME_TEAM",
         "duration": "REGULAR",
         "fullTime": {
-          "home": 5,
+          "home": 4,
           "away": 0
         },
         "halfTime": {
@@ -13743,7 +13743,7 @@
       "matchday": 2,
       "stage": "GROUP_STAGE",
       "group": "GROUP_G",
-      "lastUpdated": "2026-06-21T19:28:49Z",
+      "lastUpdated": "2026-06-21T20:54:16Z",
       "homeTeam": {
         "id": 805,
         "name": "Belgium",
@@ -13766,8 +13766,8 @@
           "away": 0
         },
         "halfTime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 0
         }
       },
       "odds": {
@@ -13839,7 +13839,14 @@
       "odds": {
         "msg": "Activate Odds-Package in User-Panel to retrieve odds."
       },
-      "referees": []
+      "referees": [
+        {
+          "id": 215543,
+          "name": "Espen Eskås",
+          "type": "REFEREE",
+          "nationality": "Norway"
+        }
+      ]
     },
     {
       "area": {
