@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-06-30T23:13:00.582Z",
+  "generatedAt": "2026-07-01T01:33:58.775Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -16357,7 +16357,14 @@
       "odds": {
         "msg": "Activate Odds-Package in User-Panel to retrieve odds."
       },
-      "referees": []
+      "referees": [
+        {
+          "id": 28805,
+          "name": "Jesús Valenzuela",
+          "type": "REFEREE",
+          "nationality": "Venezuela"
+        }
+      ]
     },
     {
       "area": {
@@ -16416,7 +16423,14 @@
       "odds": {
         "msg": "Activate Odds-Package in User-Panel to retrieve odds."
       },
-      "referees": []
+      "referees": [
+        {
+          "id": 43899,
+          "name": "Danny Makkelie",
+          "type": "REFEREE",
+          "nationality": "Netherlands"
+        }
+      ]
     },
     {
       "area": {
@@ -16441,11 +16455,11 @@
       },
       "id": 537425,
       "utcDate": "2026-07-01T01:00:00Z",
-      "status": "TIMED",
+      "status": "IN_PLAY",
       "matchday": null,
       "stage": "LAST_32",
       "group": null,
-      "lastUpdated": "2026-06-29T15:20:12Z",
+      "lastUpdated": "2026-07-01T01:05:45Z",
       "homeTeam": {
         "id": 769,
         "name": "Mexico",
@@ -16461,11 +16475,11 @@
         "crest": "https://crests.football-data.org/791.svg"
       },
       "score": {
-        "winner": null,
+        "winner": "DRAW",
         "duration": "REGULAR",
         "fullTime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 0
         },
         "halfTime": {
           "home": null,
@@ -16475,7 +16489,14 @@
       "odds": {
         "msg": "Activate Odds-Package in User-Panel to retrieve odds."
       },
-      "referees": []
+      "referees": [
+        {
+          "id": 9351,
+          "name": "Slavko Vinčič",
+          "type": "REFEREE",
+          "nationality": "Slovenia"
+        }
+      ]
     },
     {
       "area": {
