@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-01T17:33:22.242Z",
+  "generatedAt": "2026-07-01T19:24:18.809Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -16633,11 +16633,11 @@
       },
       "id": 537426,
       "utcDate": "2026-07-01T16:00:00Z",
-      "status": "IN_PLAY",
+      "status": "FINISHED",
       "matchday": null,
       "stage": "LAST_32",
       "group": null,
-      "lastUpdated": "2026-07-01T17:32:36Z",
+      "lastUpdated": "2026-07-01T18:06:21Z",
       "homeTeam": {
         "id": 770,
         "name": "England",
@@ -16653,10 +16653,10 @@
         "crest": "https://crests.football-data.org/congo_dr.svg"
       },
       "score": {
-        "winner": "AWAY_TEAM",
+        "winner": "HOME_TEAM",
         "duration": "REGULAR",
         "fullTime": {
-          "home": 0,
+          "home": 2,
           "away": 1
         },
         "halfTime": {
@@ -16733,7 +16733,14 @@
       "odds": {
         "msg": "Activate Odds-Package in User-Panel to retrieve odds."
       },
-      "referees": []
+      "referees": [
+        {
+          "id": 190002,
+          "name": "Said Martinez",
+          "type": "REFEREE",
+          "nationality": "Honduras"
+        }
+      ]
     },
     {
       "area": {
