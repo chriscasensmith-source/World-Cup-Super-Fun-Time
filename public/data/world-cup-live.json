@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-01T10:14:13.704Z",
+  "generatedAt": "2026-07-01T12:49:42.749Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -701,6 +701,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -926,6 +933,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -2051,6 +2065,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -2726,6 +2747,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -3401,6 +3429,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -4526,6 +4561,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -4976,6 +5018,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -5201,6 +5250,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -5426,6 +5482,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -6101,6 +6164,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -6558,6 +6628,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -7008,6 +7085,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -8358,6 +8442,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -10396,6 +10487,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -10621,6 +10719,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
@@ -10846,6 +10951,13 @@
           "code": "WC",
           "type": "CUP",
           "emblem": "https://crests.football-data.org/wm26.png"
+        },
+        {
+          "id": 2182,
+          "name": "UEFA Nations League",
+          "code": "UNL",
+          "type": "CUP",
+          "emblem": null
         }
       ],
       "coach": {
