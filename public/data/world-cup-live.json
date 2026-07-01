@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-01T22:40:17.900Z",
+  "generatedAt": "2026-07-01T23:55:54.302Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -16699,11 +16699,11 @@
       },
       "id": 537422,
       "utcDate": "2026-07-01T20:00:00Z",
-      "status": "PAUSED",
+      "status": "FINISHED",
       "matchday": null,
       "stage": "LAST_32",
       "group": null,
-      "lastUpdated": "2026-07-01T22:39:57Z",
+      "lastUpdated": "2026-07-01T22:54:56Z",
       "homeTeam": {
         "id": 805,
         "name": "Belgium",
@@ -16719,10 +16719,10 @@
         "crest": "https://crests.football-data.org/senegal.svg"
       },
       "score": {
-        "winner": "DRAW",
-        "duration": "EXTRA_TIME",
+        "winner": "HOME_TEAM",
+        "duration": "REGULAR",
         "fullTime": {
-          "home": 2,
+          "home": 3,
           "away": 2
         },
         "halfTime": {
@@ -16734,7 +16734,7 @@
           "away": null
         },
         "extraTime": {
-          "home": 0,
+          "home": 1,
           "away": 0
         }
       },
