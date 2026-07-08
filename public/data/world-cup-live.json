@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-08T07:15:06.319Z",
+  "generatedAt": "2026-07-08T09:40:42.006Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -17655,7 +17655,7 @@
       "matchday": null,
       "stage": "LAST_16",
       "group": null,
-      "lastUpdated": "2026-07-08T07:58:07Z",
+      "lastUpdated": "2026-07-08T08:25:01Z",
       "homeTeam": {
         "id": 762,
         "name": "Argentina",
