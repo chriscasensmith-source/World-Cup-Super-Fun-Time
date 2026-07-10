@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-10T20:38:59.119Z",
+  "generatedAt": "2026-07-10T21:42:21.184Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -17861,11 +17861,11 @@
       },
       "id": 537384,
       "utcDate": "2026-07-10T19:00:00Z",
-      "status": "IN_PLAY",
+      "status": "FINISHED",
       "matchday": null,
       "stage": "QUARTER_FINALS",
       "group": null,
-      "lastUpdated": "2026-07-10T20:38:43Z",
+      "lastUpdated": "2026-07-10T21:05:15Z",
       "homeTeam": {
         "id": 760,
         "name": "Spain",
@@ -17881,10 +17881,10 @@
         "crest": "https://crests.football-data.org/805.svg"
       },
       "score": {
-        "winner": "DRAW",
+        "winner": "HOME_TEAM",
         "duration": "REGULAR",
         "fullTime": {
-          "home": 1,
+          "home": 2,
           "away": 1
         },
         "halfTime": {
