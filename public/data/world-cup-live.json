@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-10T21:42:21.184Z",
+  "generatedAt": "2026-07-10T22:42:00.618Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -17865,7 +17865,7 @@
       "matchday": null,
       "stage": "QUARTER_FINALS",
       "group": null,
-      "lastUpdated": "2026-07-10T21:05:15Z",
+      "lastUpdated": "2026-07-10T22:25:01Z",
       "homeTeam": {
         "id": 760,
         "name": "Spain",
