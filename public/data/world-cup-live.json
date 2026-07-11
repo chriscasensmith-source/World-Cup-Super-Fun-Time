@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-11T21:07:06.368Z",
+  "generatedAt": "2026-07-11T22:08:49.990Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -17453,11 +17453,11 @@
       },
       "id": 537378,
       "utcDate": "2026-07-06T01:00:00Z",
-      "status": "FINISHED",
+      "status": "2026-07-06 01:00:00Z",
       "matchday": null,
       "stage": "LAST_16",
       "group": null,
-      "lastUpdated": "2026-07-11T05:20:09Z",
+      "lastUpdated": "2026-07-11T21:11:56Z",
       "homeTeam": {
         "id": 769,
         "name": "Mexico",
@@ -17927,11 +17927,11 @@
       },
       "id": 537385,
       "utcDate": "2026-07-11T21:00:00Z",
-      "status": "IN_PLAY",
+      "status": "PAUSED",
       "matchday": null,
       "stage": "QUARTER_FINALS",
       "group": null,
-      "lastUpdated": "2026-07-11T21:06:10Z",
+      "lastUpdated": "2026-07-11T21:58:07Z",
       "homeTeam": {
         "id": 8872,
         "name": "Norway",
@@ -17950,12 +17950,12 @@
         "winner": "DRAW",
         "duration": "REGULAR",
         "fullTime": {
-          "home": 0,
-          "away": 0
+          "home": 1,
+          "away": 1
         },
         "halfTime": {
-          "home": null,
-          "away": null
+          "home": 1,
+          "away": 1
         }
       },
       "odds": {
