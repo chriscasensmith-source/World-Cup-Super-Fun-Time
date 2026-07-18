@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-18T22:23:57.189Z",
+  "generatedAt": "2026-07-18T23:26:03.098Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -18207,11 +18207,11 @@
       },
       "id": 537389,
       "utcDate": "2026-07-18T21:00:00Z",
-      "status": "IN_PLAY",
+      "status": "FINISHED",
       "matchday": null,
       "stage": "THIRD_PLACE",
       "group": null,
-      "lastUpdated": "2026-07-18T22:23:36Z",
+      "lastUpdated": "2026-07-18T23:08:00Z",
       "homeTeam": {
         "id": 773,
         "name": "France",
@@ -18230,8 +18230,8 @@
         "winner": "AWAY_TEAM",
         "duration": "REGULAR",
         "fullTime": {
-          "home": 2,
-          "away": 4
+          "home": 4,
+          "away": 6
         },
         "halfTime": {
           "home": 0,
