@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-19T01:01:57.485Z",
+  "generatedAt": "2026-07-19T04:34:58.987Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -18211,7 +18211,7 @@
       "matchday": null,
       "stage": "THIRD_PLACE",
       "group": null,
-      "lastUpdated": "2026-07-18T23:08:00Z",
+      "lastUpdated": "2026-07-19T03:25:01Z",
       "homeTeam": {
         "id": 773,
         "name": "France",
