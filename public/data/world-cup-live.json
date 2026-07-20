@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-20T14:33:09.934Z",
+  "generatedAt": "2026-07-20T16:14:35.937Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -2432,13 +2432,6 @@
           "nationality": "Japan"
         },
         {
-          "id": 145293,
-          "name": "Yuito Suzuki",
-          "position": "Midfield",
-          "dateOfBirth": "2001-10-25",
-          "nationality": "Japan"
-        },
-        {
           "id": 7531,
           "name": "Ritsu Doan",
           "position": "Offence",
@@ -2478,6 +2471,13 @@
           "name": "Ayase Ueda",
           "position": "Offence",
           "dateOfBirth": "1998-08-28",
+          "nationality": "Japan"
+        },
+        {
+          "id": 145293,
+          "name": "Yuito Suzuki",
+          "position": "Offence",
+          "dateOfBirth": "2001-10-25",
           "nationality": "Japan"
         },
         {
@@ -6320,6 +6320,13 @@
           "nationality": "Turkey"
         },
         {
+          "id": 193605,
+          "name": "Can Uzun",
+          "position": "Midfield",
+          "dateOfBirth": "2005-11-11",
+          "nationality": "Turkey"
+        },
+        {
           "id": 79906,
           "name": "Yunus Akgün",
           "position": "Offence",
@@ -6359,13 +6366,6 @@
           "name": "Kenan Yıldız",
           "position": "Offence",
           "dateOfBirth": "2005-05-04",
-          "nationality": "Turkey"
-        },
-        {
-          "id": 193605,
-          "name": "Can Uzun",
-          "position": "Offence",
-          "dateOfBirth": "2005-11-11",
           "nationality": "Turkey"
         }
       ],
@@ -7171,17 +7171,17 @@
           "nationality": "Austria"
         },
         {
+          "id": 9549,
+          "name": "Konrad Laimer",
+          "position": "Defence",
+          "dateOfBirth": "1997-05-27",
+          "nationality": "Austria"
+        },
+        {
           "id": 61968,
           "name": "Michael Svoboda",
           "position": "Defence",
           "dateOfBirth": "1998-10-15",
-          "nationality": "Austria"
-        },
-        {
-          "id": 113457,
-          "name": "Alexander Prass",
-          "position": "Defence",
-          "dateOfBirth": "2001-05-26",
           "nationality": "Austria"
         },
         {
@@ -7203,13 +7203,6 @@
           "name": "Alessandro Schöpf",
           "position": "Midfield",
           "dateOfBirth": "1994-02-07",
-          "nationality": "Austria"
-        },
-        {
-          "id": 9549,
-          "name": "Konrad Laimer",
-          "position": "Midfield",
-          "dateOfBirth": "1997-05-27",
           "nationality": "Austria"
         },
         {
@@ -7248,10 +7241,10 @@
           "nationality": "Austria"
         },
         {
-          "id": 124324,
-          "name": "Patrick Wimmer",
+          "id": 113457,
+          "name": "Alexander Prass",
           "position": "Midfield",
-          "dateOfBirth": "2001-05-30",
+          "dateOfBirth": "2001-05-26",
           "nationality": "Austria"
         },
         {
@@ -7287,6 +7280,13 @@
           "name": "Saša Kalajdžić",
           "position": "Offence",
           "dateOfBirth": "1997-07-07",
+          "nationality": "Austria"
+        },
+        {
+          "id": 124324,
+          "name": "Patrick Wimmer",
+          "position": "Offence",
+          "dateOfBirth": "2001-05-30",
           "nationality": "Austria"
         }
       ],
@@ -10875,13 +10875,6 @@
           "nationality": "Norway"
         },
         {
-          "id": 169295,
-          "name": "Antonio Nusa",
-          "position": "Midfield",
-          "dateOfBirth": "2005-04-17",
-          "nationality": "Norway"
-        },
-        {
           "id": 8167,
           "name": "Alexander Sørloth",
           "position": "Offence",
@@ -10907,6 +10900,13 @@
           "name": "Andreas Schjelderup",
           "position": "Offence",
           "dateOfBirth": "2004-06-01",
+          "nationality": "Norway"
+        },
+        {
+          "id": 169295,
+          "name": "Antonio Nusa",
+          "position": "Offence",
+          "dateOfBirth": "2005-04-17",
           "nationality": "Norway"
         },
         {
