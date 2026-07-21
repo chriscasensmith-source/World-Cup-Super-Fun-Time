@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-21T18:49:26.496Z",
+  "generatedAt": "2026-07-21T20:18:31.910Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -7452,13 +7452,6 @@
           "nationality": "Colombia"
         },
         {
-          "id": 170245,
-          "name": "Jaminton Campaz",
-          "position": "Midfield",
-          "dateOfBirth": "2000-05-24",
-          "nationality": "Colombia"
-        },
-        {
           "id": 170657,
           "name": "Richard Rios",
           "position": "Midfield",
@@ -7505,6 +7498,13 @@
           "name": "Cucho Hernández",
           "position": "Offence",
           "dateOfBirth": "1999-04-20",
+          "nationality": "Colombia"
+        },
+        {
+          "id": 170245,
+          "name": "Jaminton Campaz",
+          "position": "Offence",
+          "dateOfBirth": "2000-05-24",
           "nationality": "Colombia"
         },
         {
@@ -8788,13 +8788,6 @@
           "nationality": "Panama"
         },
         {
-          "id": 28668,
-          "name": "Cecilio Waterman",
-          "position": "Midfield",
-          "dateOfBirth": "1991-04-13",
-          "nationality": "Panama"
-        },
-        {
           "id": 39139,
           "name": "Édgar Bárcenas",
           "position": "Midfield",
@@ -8823,13 +8816,6 @@
           "nationality": "Panama"
         },
         {
-          "id": 110577,
-          "name": "César Yanis",
-          "position": "Midfield",
-          "dateOfBirth": "1996-01-28",
-          "nationality": "Panama"
-        },
-        {
           "id": 166946,
           "name": "Christian Martinez",
           "position": "Midfield",
@@ -8851,6 +8837,13 @@
           "nationality": "Panama"
         },
         {
+          "id": 28668,
+          "name": "Cecilio Waterman",
+          "position": "Offence",
+          "dateOfBirth": "1991-04-13",
+          "nationality": "Panama"
+        },
+        {
           "id": 43795,
           "name": "Ismael Díaz",
           "position": "Offence",
@@ -8862,6 +8855,13 @@
           "name": "Tomas Rodriguez",
           "position": "Offence",
           "dateOfBirth": "1999-03-09",
+          "nationality": "Panama"
+        },
+        {
+          "id": 110577,
+          "name": "César Yanis",
+          "position": "Offence",
+          "dateOfBirth": "1996-01-28",
           "nationality": "Panama"
         },
         {
