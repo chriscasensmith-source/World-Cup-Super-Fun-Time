@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-22T13:50:35.872Z",
+  "generatedAt": "2026-07-22T15:41:24.514Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -4457,6 +4457,13 @@
           "nationality": "New Zealand"
         },
         {
+          "id": 118981,
+          "name": "Elijah Just",
+          "position": "Midfield",
+          "dateOfBirth": "2000-05-01",
+          "nationality": "New Zealand"
+        },
+        {
           "id": 125117,
           "name": "Callum McCowatt",
           "position": "Midfield",
@@ -4510,13 +4517,6 @@
           "name": "Ben Waine",
           "position": "Offence",
           "dateOfBirth": "2001-06-11",
-          "nationality": "New Zealand"
-        },
-        {
-          "id": 118981,
-          "name": "Elijah Just",
-          "position": "Offence",
-          "dateOfBirth": "2000-05-01",
           "nationality": "New Zealand"
         },
         {
@@ -5153,6 +5153,13 @@
           "nationality": "Sweden"
         },
         {
+          "id": 72511,
+          "name": "Benjamin Nygren",
+          "position": "Midfield",
+          "dateOfBirth": "2001-07-08",
+          "nationality": "Sweden"
+        },
+        {
           "id": 145613,
           "name": "Yasin Ayari",
           "position": "Midfield",
@@ -5199,13 +5206,6 @@
           "name": "Gustaf Nilsson",
           "position": "Offence",
           "dateOfBirth": "1997-05-23",
-          "nationality": "Sweden"
-        },
-        {
-          "id": 72511,
-          "name": "Benjamin Nygren",
-          "position": "Offence",
-          "dateOfBirth": "2001-07-08",
           "nationality": "Sweden"
         },
         {
@@ -11100,13 +11100,6 @@
           "nationality": "Scotland"
         },
         {
-          "id": 270697,
-          "name": "Findlay Curtis",
-          "position": "Midfield",
-          "dateOfBirth": null,
-          "nationality": "Scotland"
-        },
-        {
           "id": 290139,
           "name": "Tyler Fletcher",
           "position": "Midfield",
@@ -11153,6 +11146,13 @@
           "name": "Ben Doak",
           "position": "Offence",
           "dateOfBirth": "2005-11-11",
+          "nationality": "Scotland"
+        },
+        {
+          "id": 270697,
+          "name": "Findlay Curtis",
+          "position": "Offence",
+          "dateOfBirth": null,
           "nationality": "Scotland"
         }
       ],
