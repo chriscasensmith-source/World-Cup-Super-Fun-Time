@@ -2,7 +2,7 @@
   "source": "football-data.org",
   "competitionCode": "WC",
   "season": "2026",
-  "generatedAt": "2026-07-27T18:04:12.340Z",
+  "generatedAt": "2026-07-27T19:53:48.564Z",
   "competition": {
     "area": {
       "id": 2267,
@@ -4288,6 +4288,13 @@
           "nationality": "Australia"
         },
         {
+          "id": 176991,
+          "name": "Nestor Irankunda",
+          "position": "Midfield",
+          "dateOfBirth": "2006-02-09",
+          "nationality": "Australia"
+        },
+        {
           "id": 263718,
           "name": "Paul Okon-Engstler",
           "position": "Midfield",
@@ -4314,13 +4321,6 @@
           "position": "Offence",
           "dateOfBirth": "2003-11-15",
           "nationality": "Italy"
-        },
-        {
-          "id": 176991,
-          "name": "Nestor Irankunda",
-          "position": "Offence",
-          "dateOfBirth": "2006-02-09",
-          "nationality": "Australia"
         },
         {
           "id": 181753,
@@ -9540,13 +9540,6 @@
           "nationality": "Ivory Coast"
         },
         {
-          "id": 144698,
-          "name": "Parfait Guiagon",
-          "position": "Midfield",
-          "dateOfBirth": "2001-02-22",
-          "nationality": "Ivory Coast"
-        },
-        {
           "id": 269161,
           "name": "Christ Ravynel Inao Oulaï",
           "position": "Midfield",
@@ -9572,6 +9565,13 @@
           "name": "Amad Diallo",
           "position": "Offence",
           "dateOfBirth": "2002-07-11",
+          "nationality": "Ivory Coast"
+        },
+        {
+          "id": 144698,
+          "name": "Parfait Guiagon",
+          "position": "Offence",
+          "dateOfBirth": "2001-02-22",
           "nationality": "Ivory Coast"
         },
         {
